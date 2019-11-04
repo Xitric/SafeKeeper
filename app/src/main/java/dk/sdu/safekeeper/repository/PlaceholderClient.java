@@ -22,7 +22,7 @@ public class PlaceholderClient {
                     .create();
 
             instance = new Retrofit.Builder()
-                    .baseUrl("https://localhost:44330/")
+                    .baseUrl("https://safekeeper.azurewebsites.net/")
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .client(createClient(context))
                     .build();
