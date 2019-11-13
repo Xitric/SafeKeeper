@@ -90,20 +90,23 @@ public class PrivacyActivity extends AppCompatActivity implements SendPermission
     }
 
     /**
-     * Set the state of the specified permission.
+     * Set the states of the specified permissions.
      *
-     * @param permission the permission whose state to set
-     * @param state      the mutation action to set
+     * @param permissions the permissions whose state to set
+     * @param states      the mutation actions to set
      */
-    private void setSendPermission(String permission, Privacy.Mutation state) {
+    private void setSendPermissions(String[] permissions, Privacy.Mutation[] states) {
         SharedPreferences preferences = getPermissionPreferences();
-        Set<String> permissions = new HashSet<>(preferences.getStringSet(Privacy.PERMISSION_PREFERENCES, new HashSet<>()));
 
+        Set<String> permissionsSet = new HashSet<>(preferences.getStringSet(Privacy.PERMISSION_PREFERENCES, new HashSet<>()));
         SharedPreferences.Editor preferenceEditor = preferences.edit();
 
-        permissions.add(permission);
-        preferenceEditor.putStringSet(Privacy.PERMISSION_PREFERENCES, permissions);
-        preferenceEditor.putString(permission, state.toString());
+        for (int i = 0; i < permissions.length; i++) {
+            permissionsSet.add(permissions[i]);
+            preferenceEditor.putString(permissions[i], states[i].toString());
+        }
+
+        preferenceEditor.putStringSet(Privacy.PERMISSION_PREFERENCES, permissionsSet);
         preferenceEditor.apply();
     }
 
@@ -118,7 +121,7 @@ public class PrivacyActivity extends AppCompatActivity implements SendPermission
 
     @Override
     public final void onPermissionSelectionResult(String[] permissions, Privacy.Mutation[] states) {
-        //TODO: Save permissions in preferences
+        setSendPermissions(permissions, states);
         onRequestSendPermissionsResult(permissions, states);
     }
 }
