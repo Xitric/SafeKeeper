@@ -6,7 +6,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import dk.sdu.privacyenforcer.client.PrivacyEnforcingClient;
-import dk.sdu.privacyenforcer.client.filters.AbortAllFilter;
 import dk.sdu.privacyenforcer.client.filters.FineLocationFilter;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;

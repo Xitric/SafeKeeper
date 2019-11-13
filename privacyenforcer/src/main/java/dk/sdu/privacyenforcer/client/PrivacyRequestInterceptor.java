@@ -32,7 +32,7 @@ class PrivacyRequestInterceptor implements Interceptor {
         RequestBody context = parser.toInternalBody(originalBody);
         ViolationCollection violations = filterEngine.applyFilters(context);
 
-        if(violations.isAborted()) {
+        if (violations.isAborted()) {
             return new Response.Builder()
                     .code(404)
                     .protocol(Protocol.HTTP_2)
