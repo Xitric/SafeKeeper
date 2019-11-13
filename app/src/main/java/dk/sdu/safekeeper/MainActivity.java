@@ -2,6 +2,7 @@ package dk.sdu.safekeeper;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import dk.sdu.privacyenforcer.ui.Privacy;
 import dk.sdu.privacyenforcer.ui.PrivacyActivity;
@@ -33,12 +34,14 @@ public class MainActivity extends PrivacyActivity {
 
             }
         });
+    }
 
+    public void onRequestPermissionsAction(View sender) {
         //Request permissions for sending information over a network
-    requestSendPermissions(
+        requestSendPermissions(
                 new String[]{Privacy.Permission.SEND_LOCATION},
-            new String[]{"For informing analytics frameworks about where you are so we can stalk you!"});
-}
+                new String[]{"For informing analytics frameworks about where you are so we can stalk you!"});
+    }
 
     //Called when the requested permissions have been configured by the user
     @Override

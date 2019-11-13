@@ -3,11 +3,13 @@ package dk.sdu.privacyenforcer.ui;
 import android.content.SharedPreferences;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class PrivacyActivity extends AppCompatActivity {
+public class PrivacyActivity extends AppCompatActivity implements SendPermissionsModalFragment.PermissionsModalListener {
 
     /**
      * Check whether the user has granted access to send the data represented by the specified
@@ -67,8 +69,10 @@ public abstract class PrivacyActivity extends AppCompatActivity {
      * @param permissions  the permissions to request
      * @param explanations strings explaining the intended use of the permissions
      */
-    public void requestSendPermissions(String[] permissions, String[] explanations) {
-
+    public final void requestSendPermissions(String[] permissions, String[] explanations) {
+        DialogFragment newFragment = SendPermissionsModalFragment.newInstance(permissions, explanations);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        newFragment.show(transaction, null);
     }
 
     /**
@@ -79,10 +83,10 @@ public abstract class PrivacyActivity extends AppCompatActivity {
      * @param permissions the permissions originally requested
      * @param results     the user decisions regarding the requested permissions. One of
      *                    {@link Privacy.Mutation#ALLOW}, {@link Privacy.Mutation#BLOCK} or
-     *                    {@link Privacy.Mutation#FAKE}. This array is empty if the user cancelled the request
+     *                    {@link Privacy.Mutation#FAKE}. This array is empty if the user cancelled
+     *                    the request
      */
     public void onRequestSendPermissionsResult(String[] permissions, Privacy.Mutation[] results) {
-
     }
 
     /**
@@ -93,7 +97,7 @@ public abstract class PrivacyActivity extends AppCompatActivity {
      */
     private void setSendPermission(String permission, Privacy.Mutation state) {
         SharedPreferences preferences = getPermissionPreferences();
-        Set<String> permissions = new HashSet<>(preferences.getStringSet(Privacy.PERMISSION_PREFERENCES, new HashSet<String>()));
+        Set<String> permissions = new HashSet<>(preferences.getStringSet(Privacy.PERMISSION_PREFERENCES, new HashSet<>()));
 
         SharedPreferences.Editor preferenceEditor = preferences.edit();
 
@@ -105,5 +109,16 @@ public abstract class PrivacyActivity extends AppCompatActivity {
 
     private SharedPreferences getPermissionPreferences() {
         return getSharedPreferences(Privacy.PERMISSION_PREFERENCE_FILE, MODE_PRIVATE);
+    }
+
+    @Override
+    public final void onPermissionSelectionCancelled(String[] permissions) {
+        onRequestSendPermissionsResult(permissions, new Privacy.Mutation[0]);
+    }
+
+    @Override
+    public final void onPermissionSelectionResult(String[] permissions, Privacy.Mutation[] states) {
+        //TODO: Save permissions in preferences
+        onRequestSendPermissionsResult(permissions, states);
     }
 }
