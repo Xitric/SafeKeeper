@@ -2,15 +2,14 @@ package dk.sdu.privacyenforcer.ui;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
-
-import java.util.Arrays;
 
 @SuppressWarnings("WeakerAccess")
 public class SendPermissionsModalViewModel extends ViewModel {
 
-    private MutableLiveData<String> currentPermissionName = new MutableLiveData<>();
-    private MutableLiveData<String> currentExplanation = new MutableLiveData<>();
+    private MutableLiveData<Integer> currentPage = new MutableLiveData<>(0);
+    private MutableLiveData<Boolean> complete = new MutableLiveData<>(false);
 
     private String[] permissions;
     private String[] explanations;
@@ -24,17 +23,45 @@ public class SendPermissionsModalViewModel extends ViewModel {
         this.permissions = permissions;
         this.explanations = explanations;
         this.states = new Privacy.Mutation[permissions.length];
-
-        //TODO: Remove
-        Arrays.fill(this.states, Privacy.Mutation.ALLOW);
     }
 
     LiveData<String> getPermissionName() {
-        return currentPermissionName;
+        return Transformations.map(currentPage, i -> permissions[i]);
     }
 
     LiveData<String> getExplanation() {
-        return currentExplanation;
+        return Transformations.map(currentPage, i -> explanations[i]);
+    }
+
+    LiveData<Boolean> isComplete() {
+        return complete;
+    }
+
+    void grant() {
+        assert currentPage.getValue() != null;
+        states[currentPage.getValue()] = Privacy.Mutation.ALLOW;
+        nextPage();
+    }
+
+    void deny() {
+        assert currentPage.getValue() != null;
+        states[currentPage.getValue()] = Privacy.Mutation.BLOCK;
+        nextPage();
+    }
+
+    void fake() {
+        assert currentPage.getValue() != null;
+        states[currentPage.getValue()] = Privacy.Mutation.FAKE;
+        nextPage();
+    }
+
+    private void nextPage() {
+        assert currentPage.getValue() != null;
+        if (currentPage.getValue() < permissions.length - 1) {
+            currentPage.postValue(currentPage.getValue() + 1);
+        } else {
+            complete.postValue(true);
+        }
     }
 
     String[] getPermissions() {

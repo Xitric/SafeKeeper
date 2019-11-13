@@ -1,10 +1,12 @@
 package dk.sdu.privacyenforcer.ui;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -43,33 +45,40 @@ public class SendPermissionsModalFragment extends DialogFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setShowsDialog(true);
-        setCancelable(false);
-        setStyle(STYLE_NORMAL, getTheme());
 
         viewModel = ViewModelProviders.of(this).get(SendPermissionsModalViewModel.class);
         if (getArguments() != null) viewModel.init(
                 getArguments().getStringArray(BUNDLE_PERMISSIONS),
                 getArguments().getStringArray(BUNDLE_EXPLANATIONS));
+
+        viewModel.isComplete().observe(this, complete -> {
+            if (complete) {
+                dismiss();
+                listener.onPermissionSelectionResult(viewModel.getPermissions(), viewModel.getStates());
+            }
+        });
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.send_permissions_modal_fragment, container, false);
-        view.findViewById(R.id.grantButton).setOnClickListener(this::onGrantAction);
-        view.findViewById(R.id.denyButton).setOnClickListener(this::onDenyAction);
+        view.findViewById(R.id.grantButton).setOnClickListener(v -> viewModel.grant());
+        view.findViewById(R.id.denyButton).setOnClickListener(v -> viewModel.deny());
+        view.findViewById(R.id.fakeButton).setOnClickListener(v -> viewModel.fake());
+
+        TextView lblPermission = view.findViewById(R.id.lbl_permission);
+        TextView lblExplanation = view.findViewById(R.id.lbl_explanation);
+
+        viewModel.getPermissionName().observe(this, lblPermission::setText);
+        viewModel.getExplanation().observe(this, lblExplanation::setText);
+
         return view;
     }
 
-    //TODO: Handle multiple pages of permissions
-    private void onGrantAction(View sender) {
-        dismiss();
-        listener.onPermissionSelectionResult(viewModel.getPermissions(), viewModel.getStates());
-    }
-
-    private void onDenyAction(View sender) {
-        dismiss();
+    @Override
+    public void onCancel(@NonNull DialogInterface dialog) {
+        super.onCancel(dialog);
         listener.onPermissionSelectionCancelled(viewModel.getPermissions());
     }
 

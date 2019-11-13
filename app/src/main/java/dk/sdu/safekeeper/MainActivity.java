@@ -39,13 +39,25 @@ public class MainActivity extends PrivacyActivity {
     public void onRequestPermissionsAction(View sender) {
         //Request permissions for sending information over a network
         requestSendPermissions(
-                new String[]{Privacy.Permission.SEND_LOCATION},
-                new String[]{"For informing analytics frameworks about where you are so we can stalk you!"});
+                new String[]{
+                        Privacy.Permission.SEND_LOCATION,
+                        Privacy.Permission.SEND_ACCELERATION,
+                        Privacy.Permission.SEND_CONTACTS
+                }, new String[]{
+                        "For informing analytics frameworks about where you are so we can stalk you!",
+                        "For inferring your passwords so we can hack your bank account!",
+                        "For sending spam e-mails to all of your friends!"
+                });
     }
 
     //Called when the requested permissions have been configured by the user
     @Override
     public void onRequestSendPermissionsResult(String[] permissions, Privacy.Mutation[] results) {
+        if (results.length == 0) {
+            Log.i("PermissionResult", "User cancelled the permissions request");
+            return;
+        }
+
         for (int i = 0; i < permissions.length; i++) {
             Log.i("PermissionResult", "For the permission " + permissions[i] + " the user selected " + results[i]);
         }
