@@ -1,9 +1,9 @@
 package dk.sdu.privacyenforcer.client.filters;
 
-import dk.sdu.privacyenforcer.client.mutators.DataMutator;
 import dk.sdu.privacyenforcer.client.PrivacyViolation;
 import dk.sdu.privacyenforcer.client.RequestBody;
 import dk.sdu.privacyenforcer.client.ViolationCollection;
+import dk.sdu.privacyenforcer.client.mutators.DataMutator;
 
 public class FineLocationFilter implements Filter {
 
