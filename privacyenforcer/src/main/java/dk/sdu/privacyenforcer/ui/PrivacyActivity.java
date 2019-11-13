@@ -68,7 +68,7 @@ public abstract class PrivacyActivity extends AppCompatActivity {
      * @param explanations strings explaining the intended use of the permissions
      */
     public void requestSendPermissions(String[] permissions, String[] explanations) {
-        //TODO
+
     }
 
     /**
@@ -81,8 +81,8 @@ public abstract class PrivacyActivity extends AppCompatActivity {
      *                    {@link Privacy.Mutation#ALLOW}, {@link Privacy.Mutation#BLOCK} or
      *                    {@link Privacy.Mutation#FAKE}. This array is empty if the user cancelled the request
      */
-    public void onRequestSendPermissionsResult(String[] permissions, int[] results) {
-        //TODO
+    public void onRequestSendPermissionsResult(String[] permissions, Privacy.Mutation[] results) {
+
     }
 
     /**
