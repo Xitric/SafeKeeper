@@ -1,18 +1,12 @@
 package dk.sdu.safekeeper;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
 import dk.sdu.privacyenforcer.ui.Privacy;
 import dk.sdu.privacyenforcer.ui.PrivacyActivity;
-import dk.sdu.safekeeper.repository.PlaceholderClient;
-import dk.sdu.safekeeper.repository.PlaceholderData;
-import dk.sdu.safekeeper.repository.ServerResponse;
-import okhttp3.internal.annotations.EverythingIsNonNull;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MainActivity extends PrivacyActivity {
 
@@ -20,20 +14,6 @@ public class MainActivity extends PrivacyActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        PlaceholderClient.getService(getApplicationContext()).postsomeStuff(new PlaceholderData("Kasper", 24, 1.96)).enqueue(new Callback<ServerResponse>() {
-            @Override
-            @EverythingIsNonNull
-            public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
-                System.out.println();
-            }
-
-            @Override
-            @EverythingIsNonNull
-            public void onFailure(Call<ServerResponse> call, Throwable t) {
-
-            }
-        });
     }
 
     public void onRequestPermissionsAction(View sender) {
@@ -48,6 +28,11 @@ public class MainActivity extends PrivacyActivity {
                         "For inferring your passwords so we can hack your bank account!",
                         "For sending spam e-mails to all of your friends!"
                 });
+    }
+
+    public void settingsAction(View sender){
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
     }
 
     //Called when the requested permissions have been configured by the user
