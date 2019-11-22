@@ -2,7 +2,6 @@ package dk.sdu.safekeeper;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.location.Address;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -10,11 +9,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProviders;
 
-import java.io.IOException;
-import java.util.List;
-
+import dk.sdu.privacyenforcer.ui.Privacy;
 import dk.sdu.privacyenforcer.ui.PrivacyActivity;
-import dk.sdu.safekeeper.repository.weather.WeatherResponse;
 
 public class WeatherActivity extends PrivacyActivity {
 
@@ -51,17 +47,33 @@ public class WeatherActivity extends PrivacyActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
-        } else {
-            viewModel.init();
-        }
+        showWeather();
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        showWeather();
+    }
+
+    @Override
+    public void onRequestSendPermissionsResult(String[] permissions, Privacy.Mutation[] results) {
+        super.onRequestSendPermissionsResult(permissions, results);
+        showWeather();
+    }
+
+    private void showWeather() {
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+            return;
+        }
+
+        if (checkSendPermission(Privacy.Permission.SEND_LOCATION, Privacy.Mutation.BLOCK)) {
+            requestSendPermissions(new String[]{Privacy.Permission.SEND_LOCATION},
+                    new String[]{"To get weather information for your current location."});
+            return;
+        }
+
         viewModel.init();
     }
 

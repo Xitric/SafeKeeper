@@ -68,10 +68,31 @@ public class PrivacyActivity extends AppCompatActivity implements SendPermission
      * @param explanations strings explaining the intended use of the permissions
      */
     public final void requestSendPermissions(String[] permissions, String[] explanations) {
+        //TODO: uncomment to stop requesting user input for allowed permissions
+//        List<String> permissionsList = new ArrayList<>(Arrays.asList(permissions));
+//        List<String> explanationsList = new ArrayList<>(Arrays.asList(explanations));
+//
+//        filterAllowedPermissions(permissionsList, explanationsList);
+//        if (permissionsList.isEmpty()) return;
+//
+//        permissions = permissionsList.toArray(new String[0]);
+//        explanations = explanationsList.toArray(new String[0]);
+
         DialogFragment newFragment = SendPermissionsModalFragment.newInstance(permissions, explanations);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         newFragment.show(transaction, null);
     }
+
+    //TODO: uncomment to stop requesting user input for allowed permissions
+//    private void filterAllowedPermissions(List<String> permissions, List<String> explanations) {
+//        for (int i = 0; i < permissions.size(); i++) {
+//            if (checkSendPermission(permissions.get(i))) {
+//                permissions.remove(i);
+//                explanations.remove(i);
+//                i--;
+//            }
+//        }
+//    }
 
     /**
      * Called when the user has made a decision regarding a set of permissions, which were requested

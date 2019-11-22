@@ -2,13 +2,10 @@ package dk.sdu.safekeeper;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.res.Resources;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -86,7 +83,7 @@ public class WeatherViewModel extends AndroidViewModel {
         try {
             List<Address> addresses = geocoder.getFromLocation(weather.getValue().getLatitude(), weather.getValue().getLongitude(), 1);
             if (addresses.size() != 0) {
-                return addresses.get(0).getLocality();
+                return addresses.get(0).getThoroughfare();
             }
         } catch (IOException e) {
             e.printStackTrace();
