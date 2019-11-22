@@ -46,19 +46,25 @@ public class PrivacyEnforcingClient implements FilterProvider {
     public List<Filter> getFilters() {
         List<Filter> result = new ArrayList<>();
         Set<String> permissions = preferences.getStringSet(Privacy.PERMISSION_PREFERENCES, new HashSet<>());
-        if (permissions == null) return result;
 
-        for (String permission : permissions) {
-            Filter filter = filters.get(permission);
+        for (Map.Entry<String, Filter> filterEntry : filters.entrySet()) {
+            String permission = filterEntry.getKey();
+            Filter filter = filterEntry.getValue();
 
-            if (filter == null) {
-                Log.w("PrivacyEnforcingClient", "Missing filter for permission: " + permission);
+            String permissionMode = preferences.getString(permission, null);
+            if (permissionMode != null) {
+                filter.setMode(Privacy.Mutation.valueOf(permissionMode));
             } else {
-                String permissionMode = preferences.getString(permission, null);
-                if (permissionMode != null) {
-                    filter.setMode(Privacy.Mutation.valueOf(permissionMode));
-                }
-                result.add(filter);
+                filter.setMode(Privacy.Mutation.BLOCK);
+            }
+            result.add(filter);
+
+            if (permissions != null) permissions.remove(permission);
+        }
+
+        if (permissions != null) {
+            for (String permission : permissions) {
+                Log.w("PrivacyEnforcingClient", "Missing filter for permission: " + permission);
             }
         }
 
