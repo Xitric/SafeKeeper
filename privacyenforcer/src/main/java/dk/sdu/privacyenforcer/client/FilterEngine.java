@@ -10,11 +10,12 @@ class FilterEngine {
         this.filterProvider = filterProvider;
     }
 
-    ViolationCollection applyFilters(RequestBody context) {
+    ViolationCollection applyFilters(RequestContent url, RequestContent body) {
         ViolationCollection violations = new ViolationCollection();
 
         for (Filter filter : filterProvider.getFilters()) {
-            filter.filter(context, violations);
+            filter.filter(url, violations);
+            filter.filter(body, violations);
 
             if (violations.isAborted()) {
                 return violations;

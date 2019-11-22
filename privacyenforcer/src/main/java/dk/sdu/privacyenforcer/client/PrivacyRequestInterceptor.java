@@ -17,7 +17,7 @@ class PrivacyRequestInterceptor implements Interceptor {
     private final FilterEngine filterEngine;
 
     PrivacyRequestInterceptor(FilterEngine filterEngine) {
-        parser = new RequestBodyParser();
+        this.parser = new RequestBodyParser();
         this.filterEngine = filterEngine;
     }
 
@@ -25,12 +25,10 @@ class PrivacyRequestInterceptor implements Interceptor {
     @NonNull
     public Response intercept(@NonNull Chain chain) throws IOException {
         okhttp3.RequestBody originalBody = chain.request().body();
-        if (originalBody == null) {
-            return chain.proceed(chain.request());
-        }
 
-        RequestBody context = parser.toInternalBody(originalBody);
-        ViolationCollection violations = filterEngine.applyFilters(context);
+        RequestContent url = new RequestContent(chain.request().url().toString());
+        RequestContent body = parser.toInternalBody(originalBody);
+        ViolationCollection violations = filterEngine.applyFilters(url, body);
 
         if (violations.isAborted()) {
             return new Response.Builder()
@@ -42,12 +40,12 @@ class PrivacyRequestInterceptor implements Interceptor {
                     .build();
         }
 
-        violations.resolveViolations(context);
+        violations.resolve();
 
-        //Here we would write the request body back into a sink and update the content of the
-        //original request
-        okhttp3.RequestBody newBody = parser.toOkHttpBody(context);
-        Request newRequest = chain.request().newBuilder().method(chain.request().method(), newBody).build();
+        okhttp3.RequestBody newBody = parser.toOkHttpBody(body);
+        Request newRequest = chain.request().newBuilder().url(url.getContent())
+                .method(chain.request().method(), newBody)
+                .build();
         return chain.proceed(newRequest);
     }
 }

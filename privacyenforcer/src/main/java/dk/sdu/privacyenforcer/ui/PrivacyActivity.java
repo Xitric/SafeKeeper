@@ -26,7 +26,7 @@ public class PrivacyActivity extends AppCompatActivity implements SendPermission
     /**
      * Check whether the state of the specified permission matches the specified mutation action. If
      * no mutation action has been set for the specified permission, it will implicitly be
-     * interpreted as {@link Privacy.Mutation#ALLOW}.
+     * interpreted as {@link Privacy.Mutation#BLOCK}.
      *
      * @param permission the permission to check for
      * @param state      the mutation action to compare with
@@ -42,21 +42,20 @@ public class PrivacyActivity extends AppCompatActivity implements SendPermission
      *
      * @param permission the permission whose mutation action to get
      * @return the mutation action of the specified permission. If no action has been set, this
-     * defaults to {@link Privacy.Mutation#ALLOW}
+     * defaults to {@link Privacy.Mutation#BLOCK}
      */
     public final Privacy.Mutation getSendPermissionState(String permission) {
         SharedPreferences preferences = getPermissionPreferences();
         String actionString = preferences.getString(permission, null);
 
         if (actionString == null) {
-            return Privacy.Mutation.ALLOW;
+            return Privacy.Mutation.BLOCK;
         }
 
         try {
             return Privacy.Mutation.valueOf(actionString);
         } catch (IllegalArgumentException ignored) {
-            //An action has been configured, but it is somehow unknown. Better block the data to
-            //ensure that we do not leak data which the user has made a configuration for
+            //An action has been configured, but it is somehow unknown
             return Privacy.Mutation.BLOCK;
         }
     }

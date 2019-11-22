@@ -7,18 +7,20 @@ import okio.Buffer;
 
 class RequestBodyParser {
 
-    RequestBody toInternalBody(okhttp3.RequestBody body) {
-        try (Buffer buffer = new Buffer()) {
-            body.writeTo(buffer);
-            return new RequestBody(buffer.readUtf8());
-        } catch (IOException e) {
-            e.printStackTrace();
+    RequestContent toInternalBody(okhttp3.RequestBody body) {
+        if (body != null) {
+            try (Buffer buffer = new Buffer()) {
+                body.writeTo(buffer);
+                return new RequestContent(buffer.readUtf8());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
-        return null;
+        return new RequestContent("");
     }
 
-    okhttp3.RequestBody toOkHttpBody(RequestBody body) {
+    okhttp3.RequestBody toOkHttpBody(RequestContent body) {
         return okhttp3.RequestBody.create(MediaType.parse("application/json"), body.getContent());
     }
 }

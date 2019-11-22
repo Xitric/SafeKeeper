@@ -6,10 +6,10 @@ public class PrivacyViolation {
 
     private final int beginOffset;
     private final int endOffset;
-    private final RequestBody context;
+    private final RequestContent context;
     private final DataMutator mutator;
 
-    public PrivacyViolation(int beginOffset, int endOffset, RequestBody context, DataMutator mutator) {
+    public PrivacyViolation(int beginOffset, int endOffset, RequestContent context, DataMutator mutator) {
         this.beginOffset = beginOffset;
         this.endOffset = endOffset;
         this.context = context;
@@ -25,10 +25,10 @@ public class PrivacyViolation {
     }
 
     public String getContent() {
-        return context.getContent(this);
+        return context.getContent(this.getBeginOffset(), this.getEndOffset());
     }
 
-    public DataMutator getMutator() {
-        return mutator;
+    public void resolve() {
+        mutator.mutate(context, this);
     }
 }

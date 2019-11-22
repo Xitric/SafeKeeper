@@ -2,7 +2,6 @@ package dk.sdu.privacyenforcer.client;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -23,7 +22,7 @@ public class PrivacyEnforcingClient implements FilterProvider {
     private Map<String, Filter> filters;
 
     public PrivacyEnforcingClient(Context context) {
-        preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        preferences = context.getSharedPreferences(Privacy.PERMISSION_PREFERENCE_FILE, Context.MODE_PRIVATE);
         filters = new HashMap<>();
 
         registerFilter(Privacy.Permission.SEND_LOCATION, new FineLocationFilter());
@@ -48,18 +47,20 @@ public class PrivacyEnforcingClient implements FilterProvider {
     @Override
     public List<Filter> getFilters() {
         List<Filter> result = new ArrayList<>();
-        Set<String> permissions = preferences.getStringSet(PrivacyEnforcerConstants.PREFERENCE_KEY_PERMISSIONS, new HashSet<String>());
+        Set<String> permissions = preferences.getStringSet(Privacy.PERMISSION_PREFERENCES, new HashSet<>());
+        if (permissions == null) return result;
 
-        if (permissions != null) {
-            for (String permission : permissions) {
-                //TODO: how do we tell the filter if it should block or fake?
-                Filter filter = filters.get(permission);
+        for (String permission : permissions) {
+            Filter filter = filters.get(permission);
 
-                if (filter == null) {
-                    Log.w("PrivacyEnforcingClient", "Missing filter for permission: " + permission);
-                } else {
-                    result.add(filter);
+            if (filter == null) {
+                Log.w("PrivacyEnforcingClient", "Missing filter for permission: " + permission);
+            } else {
+                String permissionMode = preferences.getString(permission, null);
+                if (permissionMode != null) {
+                    filter.setMode(Privacy.Mutation.valueOf(permissionMode));
                 }
+                result.add(filter);
             }
         }
 
