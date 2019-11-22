@@ -45,10 +45,11 @@ class PrivacyRequestInterceptor implements Interceptor {
 
         violations.resolve();
 
-        okhttp3.RequestBody newBody = parser.toHttpBody(body);
-        Request newRequest = chain.request().newBuilder().url(url)
-                .method(chain.request().method(), newBody)
-                .build();
-        return chain.proceed(newRequest);
+        Request.Builder newRequestBuilder = chain.request().newBuilder().url(url);
+        if (body != null) {
+            okhttp3.RequestBody newBody = parser.toHttpBody(body);
+            newRequestBuilder.method(chain.request().method(), newBody);
+        }
+        return chain.proceed(newRequestBuilder.build());
     }
 }

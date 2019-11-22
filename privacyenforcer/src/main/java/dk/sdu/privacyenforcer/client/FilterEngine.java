@@ -17,8 +17,8 @@ class FilterEngine {
         ViolationCollection violations = new ViolationCollection();
 
         for (Filter filter : filterProvider.getFilters()) {
-            filter.filter(url, violations);
-            filter.filter(body, violations);
+            if (url != null) filter.filter(url, violations);
+            if (body != null) filter.filter(body, violations);
 
             if (violations.isAborted()) {
                 return violations;
