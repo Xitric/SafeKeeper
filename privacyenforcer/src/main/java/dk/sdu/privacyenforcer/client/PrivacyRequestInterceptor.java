@@ -2,8 +2,11 @@ package dk.sdu.privacyenforcer.client;
 
 import androidx.annotation.NonNull;
 
+import org.json.JSONObject;
+
 import java.io.IOException;
 
+import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.Protocol;
@@ -26,8 +29,8 @@ class PrivacyRequestInterceptor implements Interceptor {
     public Response intercept(@NonNull Chain chain) throws IOException {
         okhttp3.RequestBody originalBody = chain.request().body();
 
-        RequestContent url = new RequestContent(chain.request().url().toString());
-        RequestContent body = parser.toInternalBody(originalBody);
+        HttpUrl url = chain.request().url();
+        JSONObject body = parser.toJson(originalBody);
         ViolationCollection violations = filterEngine.applyFilters(url, body);
 
         if (violations.isAborted()) {
@@ -42,8 +45,8 @@ class PrivacyRequestInterceptor implements Interceptor {
 
         violations.resolve();
 
-        okhttp3.RequestBody newBody = parser.toOkHttpBody(body);
-        Request newRequest = chain.request().newBuilder().url(url.getContent())
+        okhttp3.RequestBody newBody = parser.toHttpBody(body);
+        Request newRequest = chain.request().newBuilder().url(url)
                 .method(chain.request().method(), newBody)
                 .build();
         return chain.proceed(newRequest);

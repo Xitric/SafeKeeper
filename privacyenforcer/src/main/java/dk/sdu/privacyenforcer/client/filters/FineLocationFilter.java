@@ -1,37 +1,39 @@
 package dk.sdu.privacyenforcer.client.filters;
 
-import dk.sdu.privacyenforcer.client.PrivacyViolation;
-import dk.sdu.privacyenforcer.client.RequestContent;
+import org.json.JSONObject;
+
 import dk.sdu.privacyenforcer.client.ViolationCollection;
 import dk.sdu.privacyenforcer.client.mutators.DataMutator;
-import dk.sdu.privacyenforcer.ui.Privacy;
+import okhttp3.HttpUrl;
 
-public class FineLocationFilter implements Filter {
+public class FineLocationFilter extends AbstractFilter {
 
     private final DataMutator mutator = new LocationKAnonymityMutator();
-    private Privacy.Mutation mode = Privacy.Mutation.BLOCK;
 
     @Override
-    public void setMode(Privacy.Mutation mode) {
-        this.mode = mode;
+    public void filter(HttpUrl url, ViolationCollection violations) {
+        if (shouldSkip()) return;
+
+        //TODO
     }
 
     @Override
-    public void filter(RequestContent context, ViolationCollection violations) {
-        if (mode == Privacy.Mutation.ALLOW) return;
+    public void filter(JSONObject body, ViolationCollection violations) {
+        if (shouldSkip()) return;
 
-        PrivacyViolation violation1 = new PrivacyViolation(context.getContent().indexOf("Hello"), context.getContent().indexOf("Hello") + "Hello".length(), context, kAnonymity);
-        violations.addViolation(violation1);
-
-        PrivacyViolation violation2 = new PrivacyViolation(context.getContent().indexOf("world"), context.getContent().indexOf("world") + "world".length(), context, localObfuscation);
-        violations.addViolation(violation2);
+        //TODO
     }
 
     private class LocationKAnonymityMutator implements DataMutator {
 
         @Override
-        public void mutate(RequestContent context, PrivacyViolation violation) {
-            context.substitute(violation.getBeginOffset(), violation.getEndOffset(), "Lol");
+        public void mutate(HttpUrl url, String[] flaggedParameters) {
+            //TODO
+        }
+
+        @Override
+        public void mutate(JSONObject[] flaggedObjects) {
+            //TODO
         }
     }
 }

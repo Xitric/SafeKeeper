@@ -2,33 +2,17 @@ package dk.sdu.privacyenforcer.client;
 
 import dk.sdu.privacyenforcer.client.mutators.DataMutator;
 
-public class PrivacyViolation {
+public abstract class PrivacyViolation {
 
-    private final int beginOffset;
-    private final int endOffset;
-    private final RequestContent context;
     private final DataMutator mutator;
 
-    public PrivacyViolation(int beginOffset, int endOffset, RequestContent context, DataMutator mutator) {
-        this.beginOffset = beginOffset;
-        this.endOffset = endOffset;
-        this.context = context;
+    public PrivacyViolation(DataMutator mutator) {
         this.mutator = mutator;
     }
 
-    public int getBeginOffset() {
-        return beginOffset;
+    public DataMutator getMutator() {
+        return mutator;
     }
 
-    public int getEndOffset() {
-        return endOffset;
-    }
-
-    public String getContent() {
-        return context.getContent(this.getBeginOffset(), this.getEndOffset());
-    }
-
-    public void resolve() {
-        mutator.mutate(context, this);
-    }
+    public abstract void resolve();
 }

@@ -1,9 +1,12 @@
 package dk.sdu.privacyenforcer.client.mutators;
 
-import dk.sdu.privacyenforcer.client.PrivacyViolation;
-import dk.sdu.privacyenforcer.client.RequestContent;
+import org.json.JSONObject;
+
+import okhttp3.HttpUrl;
 
 public interface DataMutator {
 
-    void mutate(RequestContent context, PrivacyViolation violation);
+    void mutate(HttpUrl url, String[] flaggedParameters);
+
+    void mutate(JSONObject[] flaggedObjects);
 }

@@ -1,6 +1,9 @@
 package dk.sdu.privacyenforcer.client;
 
+import org.json.JSONObject;
+
 import dk.sdu.privacyenforcer.client.filters.Filter;
+import okhttp3.HttpUrl;
 
 class FilterEngine {
 
@@ -10,7 +13,7 @@ class FilterEngine {
         this.filterProvider = filterProvider;
     }
 
-    ViolationCollection applyFilters(RequestContent url, RequestContent body) {
+    ViolationCollection applyFilters(HttpUrl url, JSONObject body) {
         ViolationCollection violations = new ViolationCollection();
 
         for (Filter filter : filterProvider.getFilters()) {

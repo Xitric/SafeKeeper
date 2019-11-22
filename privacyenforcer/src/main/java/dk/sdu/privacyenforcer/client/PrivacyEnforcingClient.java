@@ -26,8 +26,6 @@ public class PrivacyEnforcingClient implements FilterProvider {
         filters = new HashMap<>();
 
         registerFilter(Privacy.Permission.SEND_LOCATION, new FineLocationFilter());
-//        registerFilter(Privacy.Permission.SEND_CONTACTS, new );
-//        registerFilter(Privacy.Permission.SEND_ACCELERATION, new );
     }
 
     public OkHttpClient.Builder getClientBuilder() {
