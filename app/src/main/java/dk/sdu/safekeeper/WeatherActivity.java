@@ -44,7 +44,7 @@ public class WeatherActivity extends PrivacyActivity {
     protected void onStart() {
         super.onStart();
 
-        OpenWeatherClient.getService(getApplicationContext()).getWeatherHere(55.367558f, 10.431125f).enqueue(new Callback<WeatherResponse>() {
+        OpenWeatherClient.getService(getApplicationContext()).getWeatherHere(55.358062f, 10.390062f).enqueue(new Callback<WeatherResponse>() {
             @Override
             @EverythingIsNonNull
             public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {

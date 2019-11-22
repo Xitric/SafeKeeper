@@ -6,7 +6,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.Protocol;
@@ -29,7 +28,7 @@ class PrivacyRequestInterceptor implements Interceptor {
     public Response intercept(@NonNull Chain chain) throws IOException {
         okhttp3.RequestBody originalBody = chain.request().body();
 
-        HttpUrl url = chain.request().url();
+        RequestUrl url = new RequestUrl(chain.request().url());
         JSONObject body = parser.toJson(originalBody);
         ViolationCollection violations = filterEngine.applyFilters(url, body);
 
@@ -45,7 +44,7 @@ class PrivacyRequestInterceptor implements Interceptor {
 
         violations.resolve();
 
-        Request.Builder newRequestBuilder = chain.request().newBuilder().url(url);
+        Request.Builder newRequestBuilder = chain.request().newBuilder().url(url.getUrl());
         if (body != null) {
             okhttp3.RequestBody newBody = parser.toHttpBody(body);
             newRequestBuilder.method(chain.request().method(), newBody);

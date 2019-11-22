@@ -6,13 +6,13 @@ public abstract class AbstractFilter implements Filter {
 
     private Privacy.Mutation mode = Privacy.Mutation.BLOCK;
 
+    public Privacy.Mutation getMode() {
+        return mode;
+    }
+
     @Override
     public void setMode(Privacy.Mutation mode) {
         this.mode = mode;
-    }
-
-    public Privacy.Mutation getMode() {
-        return mode;
     }
 
     public boolean shouldSkip() {
