@@ -7,5 +7,5 @@ import retrofit2.http.Query;
 public interface OpenWeatherService {
 
     @GET("weather")
-    Call<WeatherResponse> getWeatherHere(@Query("lat") float latitude, @Query("lon") float longitude);
+    Call<WeatherResponse> getWeatherHere(@Query("lat") double latitude, @Query("lon") double longitude);
 }
