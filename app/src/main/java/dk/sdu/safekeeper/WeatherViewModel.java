@@ -46,7 +46,6 @@ public class WeatherViewModel extends AndroidViewModel {
         if (location.getValue() != null) return;
 
         try {
-            status.postValue("Getting your location, hang on!");
             location.postValue(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
         } catch (SecurityException ignored) {
         }
@@ -63,7 +62,7 @@ public class WeatherViewModel extends AndroidViewModel {
                 if (response.isSuccessful()) {
                     weatherResponse.postValue(response.body());
                 } else {
-                    onFailure(call, new IllegalStateException("Request failed"));
+                    onFailure(call, new IllegalStateException());
                 }
             }
 
@@ -89,6 +88,7 @@ public class WeatherViewModel extends AndroidViewModel {
             e.printStackTrace();
         }
 
+        status.postValue("Failed to infer your address");
         return "Unknown";
     }
 

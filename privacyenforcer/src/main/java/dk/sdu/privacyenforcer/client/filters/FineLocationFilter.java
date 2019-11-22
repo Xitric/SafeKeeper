@@ -11,17 +11,19 @@ import dk.sdu.privacyenforcer.client.PrivacyViolationUrl;
 import dk.sdu.privacyenforcer.client.RequestUrl;
 import dk.sdu.privacyenforcer.client.ViolationCollection;
 import dk.sdu.privacyenforcer.client.mutators.DataMutator;
+import dk.sdu.privacyenforcer.location.BatteryConservingLocationReceiver;
 import okhttp3.HttpUrl;
 
 public class FineLocationFilter extends AbstractFilter {
 
     private final float FILTERED_DISTANCE = 10000;
-    //TODO: Get position from battery optimized service
-    private final float lat = 55.358062f;
-    private final float lon = 10.390062f;
-
+    private final BatteryConservingLocationReceiver locationReceiver;
     private final DataMutator mutator = new LocationKAnonymityMutator();
     private final Pattern floatPattern = Pattern.compile("^[-+]?[0-9]*\\.?,?[0-9]+([eE][-+]?[0-9]+)?$");
+
+    public FineLocationFilter(BatteryConservingLocationReceiver locationReceiver) {
+        this.locationReceiver = locationReceiver;
+    }
 
     @Override
     public void filter(RequestUrl requestUrl, ViolationCollection violations) {
@@ -61,9 +63,7 @@ public class FineLocationFilter extends AbstractFilter {
     }
 
     private boolean isCloseBy(float latGuess, float lonGuess) {
-        Location deviceLocation = new Location("");
-        deviceLocation.setLatitude(lat);
-        deviceLocation.setLongitude(lon);
+        Location deviceLocation = locationReceiver.getLocation();
 
         Location guessedLocation = new Location("");
         guessedLocation.setLatitude(latGuess);

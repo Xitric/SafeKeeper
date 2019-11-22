@@ -13,6 +13,7 @@ import java.util.Set;
 
 import dk.sdu.privacyenforcer.client.filters.Filter;
 import dk.sdu.privacyenforcer.client.filters.FineLocationFilter;
+import dk.sdu.privacyenforcer.location.BatteryConservingLocationReceiver;
 import dk.sdu.privacyenforcer.ui.Privacy;
 import okhttp3.OkHttpClient;
 
@@ -25,7 +26,7 @@ public class PrivacyEnforcingClient implements FilterProvider {
         preferences = context.getSharedPreferences(Privacy.PERMISSION_PREFERENCE_FILE, Context.MODE_PRIVATE);
         filters = new HashMap<>();
 
-        registerFilter(Privacy.Permission.SEND_LOCATION, new FineLocationFilter());
+        registerFilter(Privacy.Permission.SEND_LOCATION, new FineLocationFilter(new BatteryConservingLocationReceiver(context)));
     }
 
     public OkHttpClient.Builder getClientBuilder() {

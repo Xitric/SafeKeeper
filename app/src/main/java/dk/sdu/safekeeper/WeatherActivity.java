@@ -3,6 +3,8 @@ package dk.sdu.safekeeper;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +21,7 @@ public class WeatherActivity extends PrivacyActivity {
     private TextView lblWeatherDescription;
     private TextView lblWeatherTemperature;
     private TextView lblWeatherHumidity;
+    private ProgressBar prgLoading;
 
     private WeatherViewModel viewModel;
 
@@ -32,6 +35,7 @@ public class WeatherActivity extends PrivacyActivity {
         lblWeatherDescription = findViewById(R.id.lbl_weather_description);
         lblWeatherTemperature = findViewById(R.id.lbl_weather_temperature);
         lblWeatherHumidity = findViewById(R.id.lbl_weather_humidity);
+        prgLoading = findViewById(R.id.prg_loading);
 
         viewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
         viewModel.getStatus().observe(this, status -> Toast.makeText(this, status, Toast.LENGTH_SHORT).show());
@@ -40,6 +44,7 @@ public class WeatherActivity extends PrivacyActivity {
             lblWeatherDescription.setText(toTitleCase(weather.getDescription()));
             lblWeatherTemperature.setText(getString(R.string.temperature, weather.getTemperature()));
             lblWeatherHumidity.setText(getString(R.string.humidity, weather.getHumidity()));
+            prgLoading.setVisibility(View.INVISIBLE);
         });
         viewModel.getAddress().observe(this, address -> lblWeatherLocation.setText(getString(R.string.weather_location, address)));
     }
