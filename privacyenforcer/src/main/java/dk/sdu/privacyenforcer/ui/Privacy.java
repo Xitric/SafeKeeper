@@ -13,7 +13,7 @@ public interface Privacy {
     /**
      * The key for the preference storing a set of all configured permissions.
      */
-    String PERMISSION_PREFERENCES = "privacyenforcer.permissions";
+    String PERMISSION_PREFERENCES = "privacyenforcer_permissions";
 
     /**
      * Enum for representing the action to take in regards to various types of data. Data can either
@@ -30,8 +30,8 @@ public interface Privacy {
      * strings.
      */
     interface Permission {
-        String SEND_LOCATION = "privacyenforcer.permission.SEND_LOCATION";
-        String SEND_CONTACTS = "privacyenforcer.permission.SEND_CONTACTS";
-        String SEND_ACCELERATION = "privacyenforcer.permission.SEND_ACCELERATION";
+        String SEND_LOCATION = "privacyenforcer_permission_SEND_LOCATION";
+        String SEND_CONTACTS = "privacyenforcer_permission_SEND_CONTACTS";
+        String SEND_ACCELERATION = "privacyenforcer_permission_SEND_ACCELERATION";
     }
 }

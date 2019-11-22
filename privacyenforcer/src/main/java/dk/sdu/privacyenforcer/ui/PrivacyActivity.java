@@ -34,7 +34,6 @@ public class PrivacyActivity extends AppCompatActivity implements SendPermission
      * otherwise
      */
     public final boolean checkSendPermission(String permission, Privacy.Mutation state) {
-        SharedPreferences preferences = getPermissionPreferences();
         return state == getSendPermissionState(permission);
     }
 
