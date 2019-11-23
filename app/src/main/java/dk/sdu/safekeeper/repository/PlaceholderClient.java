@@ -7,6 +7,7 @@ import com.google.gson.GsonBuilder;
 
 import dk.sdu.privacyenforcer.client.PrivacyEnforcingClient;
 import dk.sdu.privacyenforcer.client.filters.FineLocationFilter;
+import dk.sdu.privacyenforcer.client.filters.LocalObfuscationFilter;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -34,6 +35,7 @@ public class PlaceholderClient {
         PrivacyEnforcingClient privacyClient = new PrivacyEnforcingClient(context);
 
         privacyClient.registerFilter("location", new FineLocationFilter());
+        privacyClient.registerFilter("location", new LocalObfuscationFilter());
 //        privacyClient.registerFilter("all", new AbortAllFilter());
 
         return privacyClient.getClientBuilder()
