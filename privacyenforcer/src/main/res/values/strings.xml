@@ -4,4 +4,7 @@
     <string name="privacyenforcer_permission_SEND_LOCATION">location</string>
     <string name="privacyenforcer_permission_SEND_CONTACTS">contact</string>
     <string name="privacyenforcer_permission_SEND_ACCELERATION">acceleration</string>
+    <string name="width_in_km">Width in km</string>
+    <string name="height_in_km">Height in km</string>
+    <string name="local_obfuscation_prompt_request">Enter width and height</string>
 </resources>
