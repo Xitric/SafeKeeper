@@ -1,6 +1,8 @@
 package dk.sdu.privacyenforcer.ui;
 
 import android.content.SharedPreferences;
+import android.location.Location;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
@@ -9,7 +11,8 @@ import androidx.fragment.app.FragmentTransaction;
 import java.util.HashSet;
 import java.util.Set;
 
-public class PrivacyActivity extends AppCompatActivity implements SendPermissionsModalFragment.PermissionsModalListener {
+public class PrivacyActivity extends AppCompatActivity implements SendPermissionsModalFragment.PermissionsModalListener,
+        LocalObfuscationPromptFragment.OnFragmentInteractionListener {
 
     /**
      * Check whether the user has granted access to send the data represented by the specified
@@ -123,5 +126,16 @@ public class PrivacyActivity extends AppCompatActivity implements SendPermission
     public final void onPermissionSelectionResult(String[] permissions, Privacy.Mutation[] states) {
         setSendPermissions(permissions, states);
         onRequestSendPermissionsResult(permissions, states);
+    }
+
+    public final void setLocalObfuscationArea() {
+        DialogFragment dialogFragment = LocalObfuscationPromptFragment.newInstance();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        dialogFragment.show(transaction, null);
+    }
+
+    @Override
+    public void onFragmentInteraction(Location fakeLocation) {
+        Log.i("FakeLocation", "Lat: " + fakeLocation.getLatitude() + " Lon: " + fakeLocation.getLongitude());
     }
 }

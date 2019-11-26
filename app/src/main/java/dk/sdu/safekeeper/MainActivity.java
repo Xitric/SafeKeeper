@@ -47,4 +47,8 @@ public class MainActivity extends PrivacyActivity {
             Log.i("PermissionResult", "For the permission " + permissions[i] + " the user selected " + results[i]);
         }
     }
+
+    public void localObfuscationAction(View view) {
+        setLocalObfuscationArea();
+    }
 }
