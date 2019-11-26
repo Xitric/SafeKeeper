@@ -9,6 +9,11 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
     }
     buildTypes {
         release {
@@ -45,4 +50,11 @@ dependencies {
 
     //Apache commons math
     implementation files('libs/commons-math3-3.6.1.jar')
+
+    //Database
+    implementation 'androidx.room:room-runtime:2.2.2'
+    annotationProcessor 'androidx.room:room-compiler:2.2.2'
+
+    //For displaying charts
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 }
