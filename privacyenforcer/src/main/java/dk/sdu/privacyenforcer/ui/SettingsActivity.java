@@ -1,10 +1,10 @@
 package dk.sdu.privacyenforcer.ui;
 
+import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-
-import android.os.Bundle;
 
 import dk.sdu.privacyenforcer.R;
 
@@ -18,9 +18,10 @@ public class SettingsActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Settings");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Fragment settingsFragment = new SettingsFragment();
+        Fragment settingsFragment = SettingsFragment.newInstance();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.add(R.id.fragment_container, settingsFragment);
         fragmentTransaction.commit();
     }
+
 }

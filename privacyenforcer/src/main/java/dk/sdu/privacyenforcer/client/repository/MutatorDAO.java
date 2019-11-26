@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public interface MutatorDAO {
     @Query("SELECT * FROM MutatorEntity WHERE type IN (:type)")
     LiveData<List<MutatorEntity>> loadAllMutatorsIdsByType(String type);
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(MutatorEntity... mutatorEntities);
 
     @Delete

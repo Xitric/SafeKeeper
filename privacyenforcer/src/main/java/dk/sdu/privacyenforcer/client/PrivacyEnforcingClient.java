@@ -59,12 +59,12 @@ public class PrivacyEnforcingClient implements FilterProvider {
                 mutatorEntities[i] = mutatorEntity;
             }
 
-            new Runnable() {
+            new Thread() {
                 @Override
                 public void run() {
                     LibraryDatabase.getInstance(context).mutatorDAO().insertAll(mutatorEntities);
                 }
-            };
+            }.start();
 
         }
     }
