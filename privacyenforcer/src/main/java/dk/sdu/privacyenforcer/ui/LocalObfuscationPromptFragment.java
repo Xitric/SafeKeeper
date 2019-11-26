@@ -23,7 +23,7 @@ import com.google.android.gms.location.LocationServices;
 import java.util.Random;
 
 import dk.sdu.privacyenforcer.R;
-import dk.sdu.privacyenforcer.client.mutators.GeographicManager;
+import dk.sdu.privacyenforcer.client.GeographicManager;
 
 
 public class LocalObfuscationPromptFragment extends DialogFragment {
