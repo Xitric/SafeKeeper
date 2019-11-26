@@ -4,6 +4,7 @@ import android.location.Location;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 import dk.sdu.privacyenforcer.client.PrivacyViolation;
@@ -21,9 +22,13 @@ public class FineLocationFilter extends AbstractFilter {
     private final BatteryConservingLocationReceiver locationReceiver;
     private final DataMutator mutator = new LocationKAnonymityMutator();
     private final Pattern floatPattern = Pattern.compile("^[-+]?[0-9]*\\.?,?[0-9]+([eE][-+]?[0-9]+)?$");
+    private ArrayList<String> mutatorIdentifiers = new ArrayList<>();
 
     public FineLocationFilter(BatteryConservingLocationReceiver locationReceiver) {
         this.locationReceiver = locationReceiver;
+        mutatorIdentifiers.add("MUTATOR1");
+        mutatorIdentifiers.add("MUTATOR2");
+        mutatorIdentifiers.add("MUTATOR3");
     }
 
     @Override
@@ -61,6 +66,11 @@ public class FineLocationFilter extends AbstractFilter {
         if (shouldSkip()) return;
 
         //TODO
+    }
+
+    @Override
+    public ArrayList<String> getMutatorIdentifiers() {
+        return mutatorIdentifiers;
     }
 
     private boolean isCloseBy(float latGuess, float lonGuess) {

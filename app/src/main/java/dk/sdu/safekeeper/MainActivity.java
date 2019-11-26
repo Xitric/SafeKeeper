@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import dk.sdu.privacyenforcer.client.PrivacyEnforcingClient;
 import dk.sdu.privacyenforcer.ui.Privacy;
 import dk.sdu.privacyenforcer.ui.PrivacyActivity;
 
@@ -14,6 +15,7 @@ public class MainActivity extends PrivacyActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        new PrivacyEnforcingClient(this); // temp
     }
 
     public void onRequestPermissionsAction(View sender) {
