@@ -56,4 +56,9 @@ public class MainActivity extends PrivacyActivity {
     public void localObfuscationAction(View view) {
         setLocalObfuscationArea();
     }
+
+    public void onPerformanceAction(View sender) {
+        Intent startPerformance = new Intent(this, PerformanceActivity.class);
+        startActivity(startPerformance);
+    }
 }
