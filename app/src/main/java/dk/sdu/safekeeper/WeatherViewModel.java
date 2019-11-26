@@ -1,19 +1,18 @@
 package dk.sdu.safekeeper;
 
 import android.app.Application;
-import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,7 +29,7 @@ public class WeatherViewModel extends AndroidViewModel {
 
     private OpenWeatherService weatherService;
     private Geocoder geocoder;
-    private LocationManager locationManager;
+    private FusedLocationProviderClient locationManager;
 
     private MutableLiveData<String> status = new MutableLiveData<>();
     private MutableLiveData<Location> location = new MutableLiveData<>();
@@ -41,37 +40,18 @@ public class WeatherViewModel extends AndroidViewModel {
         super(application);
         weatherService = OpenWeatherClient.getService(application);
         geocoder = new Geocoder(application);
-        locationManager = (LocationManager) application.getSystemService(Context.LOCATION_SERVICE);
+        locationManager = LocationServices.getFusedLocationProviderClient(application);
     }
 
     public void init() {
         if (location.getValue() != null) return;
 
         try {
-            Location lastKnown = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if (lastKnown != null) {
-                location.postValue(lastKnown);
-                return;
-            }
-
-            locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, new LocationListener() {
-                @Override
-                public void onLocationChanged(Location loc) {
+            locationManager.getLastLocation().addOnSuccessListener(loc -> {
+                if (loc != null) {
                     location.postValue(loc);
                 }
-
-                @Override
-                public void onStatusChanged(String provider, int status, Bundle extras) {
-                }
-
-                @Override
-                public void onProviderEnabled(String provider) {
-                }
-
-                @Override
-                public void onProviderDisabled(String provider) {
-                }
-            }, null);
+            });
         } catch (SecurityException ignored) {
         }
     }
