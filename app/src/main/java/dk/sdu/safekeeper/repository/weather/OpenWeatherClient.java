@@ -1,4 +1,4 @@
-package dk.sdu.safekeeper.repository;
+package dk.sdu.safekeeper.repository.weather;
 
 import android.content.Context;
 
@@ -10,17 +10,18 @@ import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class PlaceholderClient {
+public class OpenWeatherClient {
 
     private static Retrofit instance;
 
     public static Retrofit getInstance(Context context) {
         if (instance == null) {
             Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(WeatherResponse.class, new WeatherResponse.WeatherResponseDeserializer())
                     .create();
 
             instance = new Retrofit.Builder()
-                    .baseUrl("https://safekeeper.azurewebsites.net/")
+                    .baseUrl("http://api.openweathermap.org/data/2.5/")
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .client(createClient(context))
                     .build();
@@ -32,10 +33,11 @@ public class PlaceholderClient {
     private static OkHttpClient createClient(Context context) {
         PrivacyEnforcingClient privacyClient = new PrivacyEnforcingClient(context);
         return privacyClient.getClientBuilder()
+                .addInterceptor(new ApiKeyInterceptor())
                 .build();
     }
 
-    public static PlaceholderService getService(Context context) {
-        return getInstance(context).create(PlaceholderService.class);
+    public static OpenWeatherService getService(Context context) {
+        return getInstance(context).create(OpenWeatherService.class);
     }
 }

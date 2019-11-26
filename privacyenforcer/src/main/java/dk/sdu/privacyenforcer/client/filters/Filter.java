@@ -1,9 +1,16 @@
 package dk.sdu.privacyenforcer.client.filters;
 
-import dk.sdu.privacyenforcer.client.RequestBody;
+import org.json.JSONObject;
+
+import dk.sdu.privacyenforcer.client.RequestUrl;
 import dk.sdu.privacyenforcer.client.ViolationCollection;
+import dk.sdu.privacyenforcer.ui.Privacy;
 
 public interface Filter {
 
-    void filter(RequestBody context, ViolationCollection violations);
+    void setMode(Privacy.Mutation mode);
+
+    void filter(RequestUrl requestUrl, ViolationCollection violations);
+
+    void filter(JSONObject body, ViolationCollection violations);
 }

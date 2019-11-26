@@ -1,5 +1,6 @@
 package dk.sdu.safekeeper;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -61,5 +62,10 @@ public class MainActivity extends PrivacyActivity {
         for (int i = 0; i < permissions.length; i++) {
             Log.i("PermissionResult", "For the permission " + permissions[i] + " the user selected " + results[i]);
         }
+    }
+
+    public void onWeatherAction(View sender) {
+        Intent startWeather = new Intent(this, WeatherActivity.class);
+        startActivity(startWeather);
     }
 }

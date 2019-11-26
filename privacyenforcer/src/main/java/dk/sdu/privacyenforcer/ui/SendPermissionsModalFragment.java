@@ -23,6 +23,8 @@ public class SendPermissionsModalFragment extends DialogFragment {
     private SendPermissionsModalViewModel viewModel;
     private PermissionsModalListener listener;
 
+    private TextView lblPermission;
+
     static SendPermissionsModalFragment newInstance(String[] permissions, String[] explanations) {
         SendPermissionsModalFragment fragment = new SendPermissionsModalFragment();
 
@@ -67,13 +69,21 @@ public class SendPermissionsModalFragment extends DialogFragment {
         view.findViewById(R.id.denyButton).setOnClickListener(v -> viewModel.deny());
         view.findViewById(R.id.fakeButton).setOnClickListener(v -> viewModel.fake());
 
-        TextView lblPermission = view.findViewById(R.id.lbl_permission);
+        lblPermission = view.findViewById(R.id.lbl_permission);
         TextView lblExplanation = view.findViewById(R.id.lbl_explanation);
 
-        viewModel.getPermissionName().observe(this, lblPermission::setText);
+        viewModel.getPermissionName().observe(this, this::setPermissionText);
         viewModel.getExplanation().observe(this, lblExplanation::setText);
 
         return view;
+    }
+
+    private void setPermissionText(String permission) {
+        assert getContext() != null;
+        int id = getResources().getIdentifier(permission, "string", getContext().getPackageName());
+        String permissionLocalizedName = getString(id);
+
+        lblPermission.setText(getString(R.string.permission_header, permissionLocalizedName));
     }
 
     @Override
