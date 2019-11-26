@@ -11,6 +11,7 @@ import dk.sdu.privacyenforcer.client.PrivacyViolationUrl;
 import dk.sdu.privacyenforcer.client.RequestUrl;
 import dk.sdu.privacyenforcer.client.ViolationCollection;
 import dk.sdu.privacyenforcer.client.mutators.DataMutator;
+import dk.sdu.privacyenforcer.client.mutators.LocationKAnonymityMutator;
 import dk.sdu.privacyenforcer.location.BatteryConservingLocationReceiver;
 import okhttp3.HttpUrl;
 
@@ -72,22 +73,4 @@ public class FineLocationFilter extends AbstractFilter {
         return deviceLocation.distanceTo(guessedLocation) <= FILTERED_DISTANCE;
     }
 
-    private class LocationKAnonymityMutator implements DataMutator {
-
-        @Override
-        public void mutate(RequestUrl requestUrl, String[] flaggedParameters) {
-            //TODO: Fake position
-            HttpUrl newUrl = requestUrl.getUrl().newBuilder()
-                    .setEncodedQueryParameter(flaggedParameters[0], "40.75115343118427")
-                    .setEncodedQueryParameter(flaggedParameters[1], "-73.9883633370433")
-                    .build();
-
-            requestUrl.setUrl(newUrl);
-        }
-
-        @Override
-        public void mutate(JSONObject[] flaggedObjects) {
-            //TODO
-        }
-    }
 }
