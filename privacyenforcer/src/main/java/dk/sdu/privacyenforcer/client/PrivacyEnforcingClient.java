@@ -13,8 +13,9 @@ import java.util.Set;
 
 import dk.sdu.privacyenforcer.client.filters.Filter;
 import dk.sdu.privacyenforcer.client.filters.FineLocationFilter;
+import dk.sdu.privacyenforcer.client.repository.LibraryDatabase;
+import dk.sdu.privacyenforcer.client.repository.MutatorEntity;
 import dk.sdu.privacyenforcer.location.BatteryConservingLocationReceiver;
-import dk.sdu.privacyenforcer.ui.Privacy;
 import okhttp3.OkHttpClient;
 
 public class PrivacyEnforcingClient implements FilterProvider {
@@ -27,6 +28,7 @@ public class PrivacyEnforcingClient implements FilterProvider {
         filters = new HashMap<>();
 
         registerFilter(Privacy.Permission.SEND_LOCATION, new FineLocationFilter(new BatteryConservingLocationReceiver(context)));
+        registerMutators(context);
     }
 
     public OkHttpClient.Builder getClientBuilder() {
@@ -41,6 +43,29 @@ public class PrivacyEnforcingClient implements FilterProvider {
 
     public void registerFilter(String permission, Filter filter) {
         filters.put(permission, filter);
+    }
+
+
+    public void registerMutators(Context context) {
+        for (Map.Entry<String, Filter> filterEntry : filters.entrySet()) {
+            List<String> mutatorIdentifiers = filterEntry.getValue().getMutatorIdentifiers();
+            MutatorEntity[] mutatorEntities = new MutatorEntity[mutatorIdentifiers.size()];
+
+            for (int i = 0; i < mutatorIdentifiers.size(); i++) {
+                MutatorEntity mutatorEntity = new MutatorEntity();
+                mutatorEntity.setMid(mutatorIdentifiers.get(i));
+                mutatorEntity.setType(filterEntry.getKey());
+                mutatorEntities[i] = mutatorEntity;
+            }
+
+            new Thread() {
+                @Override
+                public void run() {
+                    LibraryDatabase.getInstance(context).mutatorDAO().insertAll(mutatorEntities);
+                }
+            }.start();
+
+        }
     }
 
     @Override

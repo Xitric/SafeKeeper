@@ -14,6 +14,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import dk.sdu.privacyenforcer.R;
+import dk.sdu.privacyenforcer.client.Privacy;
 
 public class SendPermissionsModalFragment extends DialogFragment {
 

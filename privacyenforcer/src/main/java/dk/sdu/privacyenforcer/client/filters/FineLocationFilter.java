@@ -5,18 +5,18 @@ import android.location.Location;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
+import dk.sdu.privacyenforcer.client.Privacy;
 import dk.sdu.privacyenforcer.client.PrivacyViolation;
 import dk.sdu.privacyenforcer.client.PrivacyViolationBody;
 import dk.sdu.privacyenforcer.client.PrivacyViolationUrl;
 import dk.sdu.privacyenforcer.client.RequestUrl;
 import dk.sdu.privacyenforcer.client.ViolationCollection;
 import dk.sdu.privacyenforcer.client.mutators.DataMutator;
+import dk.sdu.privacyenforcer.client.mutators.LocationKAnonymityMutator;
 import dk.sdu.privacyenforcer.location.BatteryConservingLocationReceiver;
 import okhttp3.HttpUrl;
 
@@ -26,9 +26,12 @@ public class FineLocationFilter extends AbstractFilter {
     private final BatteryConservingLocationReceiver locationReceiver;
     private final DataMutator mutator = new LocationKAnonymityMutator();
     private final Pattern floatPattern = Pattern.compile("^[-+]?[0-9]*\\.?,?[0-9]+([eE][-+]?[0-9]+)?$");
+    private ArrayList<String> mutatorIdentifiers = new ArrayList<>();
 
     public FineLocationFilter(BatteryConservingLocationReceiver locationReceiver) {
         this.locationReceiver = locationReceiver;
+        mutatorIdentifiers.add(Privacy.LocationMutators.DUMMY);
+        mutatorIdentifiers.add(Privacy.LocationMutators.OBFUSCATION);
     }
 
     @Override
@@ -109,6 +112,11 @@ public class FineLocationFilter extends AbstractFilter {
             }
         }
     }
+    
+    @Override
+    public ArrayList<String> getMutatorIdentifiers() {
+        return mutatorIdentifiers;
+    }
 
     private boolean isCloseBy(double latGuess, double lonGuess) {
         Location deviceLocation = locationReceiver.getLocation();
@@ -118,24 +126,5 @@ public class FineLocationFilter extends AbstractFilter {
         guessedLocation.setLongitude(lonGuess);
 
         return deviceLocation.distanceTo(guessedLocation) <= FILTERED_DISTANCE;
-    }
-
-    private class LocationKAnonymityMutator implements DataMutator {
-
-        @Override
-        public void mutate(RequestUrl requestUrl, String[] flaggedParameters) {
-            //TODO: Fake position
-            HttpUrl newUrl = requestUrl.getUrl().newBuilder()
-                    .setEncodedQueryParameter(flaggedParameters[0], "40.75115343118427")
-                    .setEncodedQueryParameter(flaggedParameters[1], "-73.9883633370433")
-                    .build();
-
-            requestUrl.setUrl(newUrl);
-        }
-
-        @Override
-        public void mutate(JSONObject body, String[] flaggedElements) {
-            //TODO
-        }
     }
 }

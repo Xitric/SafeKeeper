@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
+import dk.sdu.privacyenforcer.client.Privacy;
+
 @SuppressWarnings("WeakerAccess")
 public class SendPermissionsModalViewModel extends ViewModel {
 

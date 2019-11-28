@@ -57,4 +57,7 @@ dependencies {
 
     //For displaying charts
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
+    // The new preference api
+    implementation 'androidx.preference:preference:1.1.0'
 }

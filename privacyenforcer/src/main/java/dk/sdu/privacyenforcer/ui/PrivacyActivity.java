@@ -11,6 +11,8 @@ import androidx.fragment.app.FragmentTransaction;
 import java.util.HashSet;
 import java.util.Set;
 
+import dk.sdu.privacyenforcer.client.Privacy;
+
 public class PrivacyActivity extends AppCompatActivity implements SendPermissionsModalFragment.PermissionsModalListener,
         LocalObfuscationPromptFragment.OnFragmentInteractionListener {
 
