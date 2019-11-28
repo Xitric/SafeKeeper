@@ -6,7 +6,6 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
 
 import java.io.IOException;
 import java.util.List;
@@ -32,18 +31,15 @@ public class PerformanceViewModel extends AndroidViewModel {
         running = new MutableLiveData<>(false);
     }
 
-    LiveData<List<PerformanceMeasureEntity>> loadTest() {
+    LiveData<List<PerformanceMeasureEntity>> loadTest(int id) {
         if (running.getValue() != null && running.getValue()) return null;
 
         running.postValue(true);
 
-        return Transformations.switchMap(database.performanceDao().getMaxRunId(), maxId -> {
-            int nextId = maxId + 1;
-            performanceThread = new Thread(new PerformanceRunner(nextId));
-            performanceThread.start();
+        performanceThread = new Thread(new PerformanceRunner(id));
+        performanceThread.start();
 
-            return database.performanceDao().getPerformanceMeasures(nextId);
-        });
+        return database.performanceDao().getPerformanceMeasures(id);
     }
 
     void stop() {
@@ -53,15 +49,23 @@ public class PerformanceViewModel extends AndroidViewModel {
     }
 
     void clear() {
-        database.performanceDao().clear();
+        new Thread(() -> database.performanceDao().clear()).start();
     }
 
     LiveData<Boolean> getRunning() {
         return running;
     }
 
-    LiveData<List<List<PerformanceMeasureEntity>>> getAllMeasures() {
-        return database.performanceDao().getAllPerformanceMeasures();
+    LiveData<List<Integer>> getAllRunIds() {
+        return database.performanceDao().getAllRunIds();
+    }
+
+    LiveData<Integer> getMaxId() {
+        return database.performanceDao().getMaxRunId();
+    }
+
+    LiveData<List<PerformanceMeasureEntity>> getPerformanceMeasures(int runId) {
+        return database.performanceDao().getPerformanceMeasures(runId);
     }
 
     @Override
