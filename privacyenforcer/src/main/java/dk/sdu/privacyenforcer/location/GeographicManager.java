@@ -1,4 +1,4 @@
-package dk.sdu.privacyenforcer.client;
+package dk.sdu.privacyenforcer.location;
 
 import android.location.Location;
 

@@ -8,5 +8,5 @@ public interface DataMutator {
 
     void mutate(RequestUrl requestUrl, String[] flaggedParameters);
 
-    void mutate(JSONObject[] flaggedObjects);
+    void mutate(JSONObject body, String[] flaggedElements);
 }

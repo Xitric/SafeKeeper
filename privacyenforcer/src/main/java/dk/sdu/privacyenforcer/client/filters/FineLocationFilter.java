@@ -4,9 +4,15 @@ import android.location.Location;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import dk.sdu.privacyenforcer.client.PrivacyViolation;
+import dk.sdu.privacyenforcer.client.PrivacyViolationBody;
 import dk.sdu.privacyenforcer.client.PrivacyViolationUrl;
 import dk.sdu.privacyenforcer.client.RequestUrl;
 import dk.sdu.privacyenforcer.client.ViolationCollection;
@@ -30,14 +36,14 @@ public class FineLocationFilter extends AbstractFilter {
         HttpUrl url = requestUrl.getUrl();
         if (shouldSkip()) return;
 
-        //Generate all possible pairs of query parameters as floats
+        //Generate all possible pairs of query parameters as doubles
         for (int i = 0; i < url.querySize() - 1; i++) {
             if (!floatPattern.matcher(url.queryParameterValue(i)).matches()) continue;
-            float a = Float.parseFloat(url.queryParameterValue(i));
+            double a = Double.parseDouble(url.queryParameterValue(i));
 
             for (int j = i + 1; j < url.querySize(); j++) {
                 if (!floatPattern.matcher(url.queryParameterValue(j)).matches()) continue;
-                float b = Float.parseFloat(url.queryParameterValue(j));
+                double b = Double.parseDouble(url.queryParameterValue(j));
 
                 if (isCloseBy(a, b) || isCloseBy(b, a)) {
                     if (shouldAbort()) {
@@ -59,10 +65,52 @@ public class FineLocationFilter extends AbstractFilter {
     public void filter(JSONObject body, ViolationCollection violations) {
         if (shouldSkip()) return;
 
-        //TODO
+        findViolationsRecursively(body, violations);
     }
 
-    private boolean isCloseBy(float latGuess, float lonGuess) {
+    private void findViolationsRecursively(JSONObject body, ViolationCollection violations) {
+        List<String> doubleElements = new ArrayList<>();
+
+        //For each object recursively, extract all doubles
+        for (Iterator<String> keys = body.keys(); keys.hasNext();) {
+            String next = keys.next();
+
+            JSONObject nestedObject = body.optJSONObject(next);
+            if (nestedObject != null) {
+                findViolationsRecursively(nestedObject, violations);
+                continue;
+            }
+
+            double detectedDouble = body.optDouble(next);
+            if (!Double.isNaN(detectedDouble)) {
+                doubleElements.add(next);
+            }
+        }
+
+        //Test all possible pairs
+        for (int i = 0; i < doubleElements.size(); i++) {
+            double a = body.optDouble(doubleElements.get(i));
+
+            for (int j = i + 1; j < doubleElements.size(); j++) {
+                double b = body.optDouble(doubleElements.get(j));
+
+                if (isCloseBy(a, b) || isCloseBy(b, a)) {
+                    if (shouldAbort()) {
+                        violations.abort();
+                        return;
+                    }
+
+                    PrivacyViolation violation = new PrivacyViolationBody(mutator, body, new String[]{
+                            doubleElements.get(i),
+                            doubleElements.get(j)
+                    });
+                    violations.addViolation(violation);
+                }
+            }
+        }
+    }
+
+    private boolean isCloseBy(double latGuess, double lonGuess) {
         Location deviceLocation = locationReceiver.getLocation();
 
         Location guessedLocation = new Location("");
@@ -86,7 +134,7 @@ public class FineLocationFilter extends AbstractFilter {
         }
 
         @Override
-        public void mutate(JSONObject[] flaggedObjects) {
+        public void mutate(JSONObject body, String[] flaggedElements) {
             //TODO
         }
     }
