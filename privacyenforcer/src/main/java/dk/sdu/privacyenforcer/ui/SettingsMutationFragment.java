@@ -9,18 +9,15 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceScreen;
 
-import java.util.concurrent.BlockingDeque;
-
-import dk.sdu.privacyenforcer.R;
-
 public class SettingsMutationFragment extends PreferenceFragmentCompat {
 
     private static final String BUNDLE_PERMISSION = "bundle_permission";
+    private static final String FRAGMENT_CONTAINER = "fragment_container";
 
-
-    public static SettingsMutationFragment newInstance(String permission) {
+    public static SettingsMutationFragment newInstance(String permission, int fragment_container) {
         Bundle args = new Bundle();
         args.putString(BUNDLE_PERMISSION, permission);
+        args.putInt(FRAGMENT_CONTAINER, fragment_container);
         SettingsMutationFragment fragment = new SettingsMutationFragment();
         fragment.setArguments(args);
         return fragment;
@@ -37,16 +34,34 @@ public class SettingsMutationFragment extends PreferenceFragmentCompat {
             permission = bundle.getString(BUNDLE_PERMISSION);
             screen.setTitle(permission);
         }
+
         Preference allow = new Preference(context);
         allow.setKey("ALLOW");
         allow.setTitle("ALLOW");
         allow.setSummary(permission);
-
+        allow.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                // TODO handle block choice
+                // Save it in shared preferences?
+                // Go back to SettingsFragment afterwards.
+                return false;
+            }
+        });
 
         Preference block = new Preference(context);
         block.setKey("BLOCK");
         block.setTitle("BLOCK");
         block.setSummary(permission);
+        block.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                // TODO handle block choice
+                // Save it in shared preferences?
+                // Go back to SettingsFragment afterwards.
+                return false;
+            }
+        });
 
         Preference fake = new Preference(context);
         fake.setKey("FAKE");
@@ -56,9 +71,11 @@ public class SettingsMutationFragment extends PreferenceFragmentCompat {
         fake.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
+                Bundle args = new Bundle();
+                int container = args.getInt(FRAGMENT_CONTAINER);
                 Fragment settingsMutatorChoiceFragment = SettingsMutatorChoiceFragment.newInstance(finalPermission);
                 FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_container, settingsMutatorChoiceFragment);
+                fragmentTransaction.replace(container, settingsMutatorChoiceFragment);
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
                 return false;

@@ -27,9 +27,8 @@ public class FineLocationFilter extends AbstractFilter {
 
     public FineLocationFilter(BatteryConservingLocationReceiver locationReceiver) {
         this.locationReceiver = locationReceiver;
-        mutatorIdentifiers.add("MUTATOR1");
-        mutatorIdentifiers.add("MUTATOR2");
-        mutatorIdentifiers.add("MUTATOR3");
+        mutatorIdentifiers.add(Privacy.LocationMutators.DUMMY);
+        mutatorIdentifiers.add(Privacy.LocationMutators.OBFUSCATION);
     }
 
     @Override

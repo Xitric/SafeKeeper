@@ -39,8 +39,21 @@ public class SettingsMutatorChoiceFragment extends PreferenceFragmentCompat {
                             mutatorPreference.setKey(mutator.mid);
                             mutatorPreference.setTitle(mutator.mid);
                             mutatorPreference.setSummary(mutator.type);
+
+                            mutatorPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                                @Override
+                                public boolean onPreferenceClick(Preference preference) {
+                                    // TODO handle mutator choice
+                                    // Save it in shared preferences
+                                    // Go back to SettingsFragment afterwards.
+                                    return false;
+                                }
+                            });
+
                             screen.addPreference(mutatorPreference);
                             Log.i("MutatorEntity", "Mid: " + mutator.getMid() + " Type: " + mutator.getType());
+
+
                         }
 
                         setPreferenceScreen(screen);

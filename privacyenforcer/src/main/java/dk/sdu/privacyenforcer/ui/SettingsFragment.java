@@ -3,6 +3,7 @@ package dk.sdu.privacyenforcer.ui;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -13,13 +14,19 @@ import androidx.preference.PreferenceScreen;
 import java.util.HashSet;
 import java.util.Set;
 
-import dk.sdu.privacyenforcer.R;
 import dk.sdu.privacyenforcer.client.Privacy;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
-    public static SettingsFragment newInstance() {
+    private static final String FRAGMENT_CONTAINER = "fragment_container";
+
+    public static SettingsFragment newInstance(int fragmentContainerId) {
         SettingsFragment fragment = new SettingsFragment();
+
+        Bundle args = new Bundle();
+        args.putInt(FRAGMENT_CONTAINER, fragmentContainerId);
+        fragment.setArguments(args);
+
         return fragment;
     }
 
@@ -38,11 +45,16 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             permissionPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    Fragment settingsMutationFragment = SettingsMutationFragment.newInstance(permission);
-                    FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction.replace(R.id.fragment_container, settingsMutationFragment);
-                    fragmentTransaction.addToBackStack(null);
-                    fragmentTransaction.commit();
+                    Bundle bundle = getArguments();
+                    if (bundle != null) {
+                        int fragment_container = bundle.getInt(FRAGMENT_CONTAINER);
+                        Fragment settingsMutationFragment = SettingsMutationFragment.newInstance(permission,fragment_container);
+                        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.replace(fragment_container, settingsMutationFragment);
+                        Log.i("CONTAINER_ID", "" + fragment_container);
+                        fragmentTransaction.addToBackStack(null);
+                        fragmentTransaction.commit();
+                    }
                     return false;
                 }
             });
