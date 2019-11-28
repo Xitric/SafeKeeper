@@ -16,7 +16,6 @@ import dk.sdu.privacyenforcer.client.filters.FineLocationFilter;
 import dk.sdu.privacyenforcer.client.repository.LibraryDatabase;
 import dk.sdu.privacyenforcer.client.repository.MutatorEntity;
 import dk.sdu.privacyenforcer.location.BatteryConservingLocationReceiver;
-import dk.sdu.privacyenforcer.ui.Privacy;
 import okhttp3.OkHttpClient;
 
 public class PrivacyEnforcingClient implements FilterProvider {

@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
+import dk.sdu.privacyenforcer.client.Privacy;
 import dk.sdu.privacyenforcer.client.PrivacyViolation;
 import dk.sdu.privacyenforcer.client.PrivacyViolationUrl;
 import dk.sdu.privacyenforcer.client.RequestUrl;

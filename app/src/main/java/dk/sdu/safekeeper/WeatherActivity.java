@@ -11,7 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProviders;
 
-import dk.sdu.privacyenforcer.ui.Privacy;
+import dk.sdu.privacyenforcer.client.Privacy;
 import dk.sdu.privacyenforcer.ui.PrivacyActivity;
 
 public class WeatherActivity extends PrivacyActivity {

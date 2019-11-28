@@ -1,4 +1,4 @@
-package dk.sdu.privacyenforcer.ui;
+package dk.sdu.privacyenforcer.client;
 
 /**
  * Interface containing constants for configuring privacy settings.
@@ -34,4 +34,10 @@ public interface Privacy {
         String SEND_CONTACTS = "privacyenforcer_permission_SEND_CONTACTS";
         String SEND_ACCELERATION = "privacyenforcer_permission_SEND_ACCELERATION";
     }
+
+    interface LocationMutators {
+        String OBFUSCATION = "privacyenforcer_location_mutator_OBFUSCATION";
+        String DUMMY = "privacyenforcer_location_mutator_DUMMY";
+    }
+
 }

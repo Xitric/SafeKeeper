@@ -6,8 +6,7 @@ import java.util.ArrayList;
 
 import dk.sdu.privacyenforcer.client.RequestUrl;
 import dk.sdu.privacyenforcer.client.ViolationCollection;
-import dk.sdu.privacyenforcer.client.mutators.DataMutator;
-import dk.sdu.privacyenforcer.ui.Privacy;
+import dk.sdu.privacyenforcer.client.Privacy;
 
 public interface Filter {
 

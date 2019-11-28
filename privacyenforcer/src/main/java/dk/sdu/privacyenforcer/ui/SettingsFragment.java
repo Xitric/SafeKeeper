@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import dk.sdu.privacyenforcer.R;
+import dk.sdu.privacyenforcer.client.Privacy;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
