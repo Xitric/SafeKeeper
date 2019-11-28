@@ -35,6 +35,8 @@ public class SettingsMutationFragment extends PreferenceFragmentCompat {
             screen.setTitle(permission);
         }
 
+        
+
         Preference allow = new Preference(context);
         allow.setKey("ALLOW");
         allow.setTitle("ALLOW");
@@ -71,13 +73,15 @@ public class SettingsMutationFragment extends PreferenceFragmentCompat {
         fake.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                Bundle args = new Bundle();
-                int container = args.getInt(FRAGMENT_CONTAINER);
-                Fragment settingsMutatorChoiceFragment = SettingsMutatorChoiceFragment.newInstance(finalPermission);
-                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(container, settingsMutatorChoiceFragment);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
+                Bundle args = getArguments();
+                if (args != null) {
+                    int container = args.getInt(FRAGMENT_CONTAINER);
+                    Fragment settingsMutatorChoiceFragment = SettingsMutatorChoiceFragment.newInstance(finalPermission);
+                    FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.replace(container, settingsMutatorChoiceFragment);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
                 return false;
             }
         });
