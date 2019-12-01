@@ -14,7 +14,7 @@ import java.util.Set;
 import dk.sdu.privacyenforcer.client.Privacy;
 
 public class PrivacyActivity extends AppCompatActivity implements SendPermissionsModalFragment.PermissionsModalListener,
-        LocalObfuscationPromptFragment.OnFragmentInteractionListener {
+        LocalObfuscationPromptFragment.OnFragmentInteractionListener, OnMutationChoiceListener {
 
     /**
      * Check whether the user has granted access to send the data represented by the specified
@@ -134,6 +134,20 @@ public class PrivacyActivity extends AppCompatActivity implements SendPermission
         preferenceEditor.apply();
     }
 
+    private void setMutatorPreference(String permission, String mutator) {
+        SharedPreferences mutatorPreferences = getPermissionPreferences();
+
+        Set<String> permissionsSet = new HashSet<>(mutatorPreferences.getStringSet(Privacy.MUTATOR_PREFERENCES, new HashSet<>()));
+        SharedPreferences.Editor preferenceEditor = mutatorPreferences.edit();
+
+        permissionsSet.add(permission);
+        preferenceEditor.putString(permission, mutator);
+
+        preferenceEditor.putStringSet(Privacy.MUTATOR_PREFERENCES, permissionsSet);
+        preferenceEditor.apply();
+
+    }
+
     private SharedPreferences getPermissionPreferences() {
         return getSharedPreferences(Privacy.PERMISSION_PREFERENCE_FILE, MODE_PRIVATE);
     }
@@ -158,5 +172,15 @@ public class PrivacyActivity extends AppCompatActivity implements SendPermission
     @Override
     public void onFragmentInteraction(Location fakeLocation) {
         Log.i("FakeLocation", "Lat: " + fakeLocation.getLatitude() + " Lon: " + fakeLocation.getLongitude());
+    }
+
+    @Override
+    public void onMutationChoiceInteraction(String permission, Privacy.Mutation state) {
+        setSendPermissions(new String[]{permission}, new Privacy.Mutation[]{state});
+    }
+
+    @Override
+    public void onMutatorChoiceInteraction(String permission, String mutator) {
+        setMutatorPreference(permission, mutator);
     }
 }

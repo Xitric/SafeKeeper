@@ -3,7 +3,6 @@ package dk.sdu.privacyenforcer.ui;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -40,26 +39,29 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         for (String permission : permissions) {
             Preference permissionPreference = new Preference(context);
-            permissionPreference.setTitle(permission);
             permissionPreference.setKey(permission);
-            permissionPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    Bundle bundle = getArguments();
-                    if (bundle != null) {
-                        int fragment_container = bundle.getInt(FRAGMENT_CONTAINER);
-                        Fragment settingsMutationFragment = SettingsMutationFragment.newInstance(permission,fragment_container);
-                        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                        fragmentTransaction.replace(fragment_container, settingsMutationFragment);
-                        Log.i("CONTAINER_ID", "" + fragment_container);
-                        fragmentTransaction.addToBackStack(null);
-                        fragmentTransaction.commit();
-                    }
-                    return false;
-                }
+            permissionPreference.setTitle(PermissionHelper.getPermissionTitle(permission, context));
+            permissionPreference.setSummary("Manage your settings for " +
+                    PermissionHelper.getPermissionText(permission, context) + " data.");
+            permissionPreference.setOnPreferenceClickListener(preference -> {
+                onPreferenceAction(permission);
+                return false;
             });
             screen.addPreference(permissionPreference);
         }
         setPreferenceScreen(screen);
     }
+
+    private void onPreferenceAction(String permission) {
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            int fragment_container = bundle.getInt(FRAGMENT_CONTAINER);
+            Fragment settingsMutationFragment = SettingsMutationFragment.newInstance(permission, fragment_container);
+            FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(fragment_container, settingsMutationFragment);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+        }
+    }
+
 }

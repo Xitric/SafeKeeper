@@ -16,6 +16,11 @@ public interface Privacy {
     String PERMISSION_PREFERENCES = "privacyenforcer_permissions";
 
     /**
+     * The key for the mutator set that stores all mutator choices.
+     */
+    String MUTATOR_PREFERENCES = "privacyenforcer_mutators";
+
+    /**
      * Enum for representing the action to take in regards to various types of data. Data can either
      * be allowed in all outgoing requests, it can be blocked entirely, or it can be substituted
      * with fake counterparts.
