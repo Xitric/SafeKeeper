@@ -39,12 +39,14 @@ public class MainFragment extends Fragment {
         Button weatherButton = view.findViewById(R.id.btn_weather);
         Button obfuscationButton = view.findViewById(R.id.btn_local_obfuscation);
         Button performanceButton = view.findViewById(R.id.btn_performance);
+        Button messengerButton = view.findViewById(R.id.btn_messenger);
 
         settingsButton.setOnClickListener(v -> onSettingsAction());
         requestPermissionsButton.setOnClickListener(v -> onRequestPermissionsAction());
         weatherButton.setOnClickListener(v -> onWeatherAction());
         obfuscationButton.setOnClickListener(v -> onLocalObfuscationAction());
         performanceButton.setOnClickListener(v -> onPerformanceAction());
+        messengerButton.setOnClickListener(v -> onMessengerAction());
 
         return view;
     }
@@ -85,6 +87,12 @@ public class MainFragment extends Fragment {
         Intent startPerformance = new Intent(getActivity(), PerformanceActivity.class);
         startActivity(startPerformance);
     }
+
+    public void onMessengerAction() {
+        Intent startMessenger = new Intent(getActivity(), MessengerActivity.class);
+        startActivity(startMessenger);
+    }
+
 
     public interface OnMainFragmentInteractionListener {
         void onLocalObfuscation();

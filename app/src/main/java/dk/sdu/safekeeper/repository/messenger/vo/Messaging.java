@@ -13,7 +13,7 @@ public class Messaging {
     private Recipient recipient;
     @SerializedName("timestamp")
     @Expose
-    private int timestamp;
+    private long timestamp;
     @SerializedName("message")
     @Expose
     private Message message;
@@ -21,7 +21,7 @@ public class Messaging {
     public Messaging() {
     }
 
-    public Messaging(Sender sender, Recipient recipient, int timestamp, Message message) {
+    public Messaging(Sender sender, Recipient recipient, long timestamp, Message message) {
         super();
         this.sender = sender;
         this.recipient = recipient;
@@ -45,11 +45,11 @@ public class Messaging {
         this.recipient = recipient;
     }
 
-    public int getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(int timestamp) {
+    public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 

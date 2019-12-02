@@ -2,6 +2,7 @@ package dk.sdu.privacyenforcer.client.filters;
 
 import android.location.Location;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -81,6 +82,23 @@ public class FineLocationFilter extends AbstractFilter {
             JSONObject nestedObject = body.optJSONObject(next);
             if (nestedObject != null) {
                 findViolationsRecursively(nestedObject, violations);
+                continue;
+            }
+
+            JSONArray nestedArray = body.optJSONArray(next);
+            if (nestedArray != null) {
+                for (int i = 0; i < nestedArray.length(); i++) {
+                    JSONObject arrayObject = nestedArray.optJSONObject(i);
+                    if (arrayObject != null) {
+                        findViolationsRecursively(arrayObject, violations);
+                        continue;
+                    }
+
+                    double detectedDouble = nestedArray.optDouble(i);
+                    if (!Double.isNaN(detectedDouble)) {
+                        doubleElements.add(next);
+                    }
+                }
                 continue;
             }
 

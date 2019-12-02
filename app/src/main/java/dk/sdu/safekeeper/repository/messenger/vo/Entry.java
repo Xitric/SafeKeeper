@@ -12,7 +12,7 @@ public class Entry {
     private String id;
     @SerializedName("time")
     @Expose
-    private int time;
+    private long time;
     @SerializedName("messaging")
     @Expose
     private List<Messaging> messaging = null;
@@ -20,7 +20,7 @@ public class Entry {
     public Entry() {
     }
 
-    public Entry(String id, int time, List<Messaging> messaging) {
+    public Entry(String id, long time, List<Messaging> messaging) {
         super();
         this.id = id;
         this.time = time;
@@ -35,11 +35,11 @@ public class Entry {
         this.id = id;
     }
 
-    public int getTime() {
+    public long getTime() {
         return time;
     }
 
-    public void setTime(int time) {
+    public void setTime(long time) {
         this.time = time;
     }
 

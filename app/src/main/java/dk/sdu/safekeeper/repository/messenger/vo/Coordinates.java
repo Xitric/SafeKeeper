@@ -7,33 +7,33 @@ public class Coordinates {
 
     @SerializedName("lat")
     @Expose
-    private int lat;
+    private double lat;
     @SerializedName("long")
     @Expose
-    private int _long;
+    private double lon;
 
     public Coordinates() {
     }
 
-    public Coordinates(int lat, int _long) {
+    public Coordinates(double lat, double lon) {
         super();
         this.lat = lat;
-        this._long = _long;
+        this.lon = lon;
     }
 
-    public int getLat() {
+    public double getLat() {
         return lat;
     }
 
-    public void setLat(int lat) {
+    public void setLat(double lat) {
         this.lat = lat;
     }
 
-    public int getLong() {
-        return _long;
+    public double getLong() {
+        return lon;
     }
 
-    public void setLong(int _long) {
-        this._long = _long;
+    public void setLong(double lon) {
+        this.lon = lon;
     }
 }
