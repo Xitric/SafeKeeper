@@ -17,7 +17,7 @@ import dk.sdu.privacyenforcer.client.PrivacyViolationUrl;
 import dk.sdu.privacyenforcer.client.RequestUrl;
 import dk.sdu.privacyenforcer.client.ViolationCollection;
 import dk.sdu.privacyenforcer.client.mutators.DataMutator;
-import dk.sdu.privacyenforcer.client.mutators.LocationKAnonymityMutator;
+import dk.sdu.privacyenforcer.client.mutators.LocationDummyMutator;
 import dk.sdu.privacyenforcer.location.BatteryConservingLocationReceiver;
 import okhttp3.HttpUrl;
 
@@ -25,9 +25,11 @@ public class FineLocationFilter extends AbstractFilter {
 
     private final float FILTERED_DISTANCE = 10000;
     private final BatteryConservingLocationReceiver locationReceiver;
-    private final DataMutator mutator = new LocationKAnonymityMutator();
     private final Pattern floatPattern = Pattern.compile("^[-+]?[0-9]*\\.?,?[0-9]+([eE][-+]?[0-9]+)?$");
+
+    //TODO: Should this not be moved to the superclass?
     private ArrayList<String> mutatorIdentifiers = new ArrayList<>();
+    private DataMutator mutator = new LocationDummyMutator();
 
     public FineLocationFilter(BatteryConservingLocationReceiver locationReceiver) {
         this.locationReceiver = locationReceiver;
@@ -76,7 +78,7 @@ public class FineLocationFilter extends AbstractFilter {
         List<String> doubleElements = new ArrayList<>();
 
         //For each object recursively, extract all doubles
-        for (Iterator<String> keys = body.keys(); keys.hasNext();) {
+        for (Iterator<String> keys = body.keys(); keys.hasNext(); ) {
             String next = keys.next();
 
             JSONObject nestedObject = body.optJSONObject(next);
@@ -130,7 +132,7 @@ public class FineLocationFilter extends AbstractFilter {
             }
         }
     }
-    
+
     @Override
     public ArrayList<String> getMutatorIdentifiers() {
         return mutatorIdentifiers;
