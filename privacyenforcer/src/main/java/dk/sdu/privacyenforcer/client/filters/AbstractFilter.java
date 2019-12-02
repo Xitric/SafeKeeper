@@ -22,4 +22,5 @@ public abstract class AbstractFilter implements Filter {
     public boolean shouldAbort() {
         return mode == Privacy.Mutation.BLOCK;
     }
+
 }

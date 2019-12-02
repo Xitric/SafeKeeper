@@ -4,7 +4,8 @@ import android.location.Location;
 
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import dk.sdu.privacyenforcer.client.Privacy;
@@ -13,6 +14,7 @@ import dk.sdu.privacyenforcer.client.PrivacyViolationUrl;
 import dk.sdu.privacyenforcer.client.RequestUrl;
 import dk.sdu.privacyenforcer.client.ViolationCollection;
 import dk.sdu.privacyenforcer.client.mutators.DataMutator;
+import dk.sdu.privacyenforcer.client.mutators.LocalObfuscationMutator;
 import dk.sdu.privacyenforcer.client.mutators.LocationKAnonymityMutator;
 import dk.sdu.privacyenforcer.location.BatteryConservingLocationReceiver;
 import okhttp3.HttpUrl;
@@ -21,14 +23,14 @@ public class FineLocationFilter extends AbstractFilter {
 
     private final float FILTERED_DISTANCE = 10000;
     private final BatteryConservingLocationReceiver locationReceiver;
-    private final DataMutator mutator = new LocationKAnonymityMutator();
+    private DataMutator mutator;
     private final Pattern floatPattern = Pattern.compile("^[-+]?[0-9]*\\.?,?[0-9]+([eE][-+]?[0-9]+)?$");
-    private ArrayList<String> mutatorIdentifiers = new ArrayList<>();
+    private Map<String, DataMutator> mutators = new HashMap<>();
 
     public FineLocationFilter(BatteryConservingLocationReceiver locationReceiver) {
         this.locationReceiver = locationReceiver;
-        mutatorIdentifiers.add(Privacy.LocationMutators.DUMMY);
-        mutatorIdentifiers.add(Privacy.LocationMutators.OBFUSCATION);
+        mutators.put(Privacy.LocationMutators.LOCAL_OBFUSCATION, new LocalObfuscationMutator());
+        mutators.put(Privacy.LocationMutators.K_ANONYMITY, new LocationKAnonymityMutator());
     }
 
     @Override
@@ -69,8 +71,13 @@ public class FineLocationFilter extends AbstractFilter {
     }
 
     @Override
-    public ArrayList<String> getMutatorIdentifiers() {
-        return mutatorIdentifiers;
+    public Map<String, DataMutator> getMutators() {
+        return mutators;
+    }
+
+    @Override
+    public void setDataMutator(String mutatorId){
+        this.mutator = mutators.get(mutatorId);
     }
 
     private boolean isCloseBy(float latGuess, float lonGuess) {

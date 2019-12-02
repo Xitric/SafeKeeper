@@ -16,7 +16,7 @@ public interface MutatorDAO {
     LiveData<List<MutatorEntity>> loadAllMutatorsIdsByType(String type);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertAll(MutatorEntity... mutatorEntities);
+    void insertAll(List<MutatorEntity> mutatorEntities);
 
     @Delete
     void delete(MutatorEntity mutatorEntity);

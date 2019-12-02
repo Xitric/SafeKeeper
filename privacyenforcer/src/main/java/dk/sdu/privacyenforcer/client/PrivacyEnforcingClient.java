@@ -22,9 +22,11 @@ public class PrivacyEnforcingClient implements FilterProvider {
 
     private SharedPreferences preferences;
     private Map<String, Filter> filters;
+    private Context context;
 
     public PrivacyEnforcingClient(Context context) {
-        preferences = context.getSharedPreferences(Privacy.PERMISSION_PREFERENCE_FILE, Context.MODE_PRIVATE);
+        this.context = context;
+        preferences = this.context.getSharedPreferences(Privacy.PERMISSION_PREFERENCE_FILE, Context.MODE_PRIVATE);
         filters = new HashMap<>();
 
         registerFilter(Privacy.Permission.SEND_LOCATION, new FineLocationFilter(new BatteryConservingLocationReceiver(context)));
@@ -48,22 +50,17 @@ public class PrivacyEnforcingClient implements FilterProvider {
 
     public void registerMutators(Context context) {
         for (Map.Entry<String, Filter> filterEntry : filters.entrySet()) {
-            List<String> mutatorIdentifiers = filterEntry.getValue().getMutatorIdentifiers();
-            MutatorEntity[] mutatorEntities = new MutatorEntity[mutatorIdentifiers.size()];
+            Set<String> mutatorIdentifiers = filterEntry.getValue().getMutators().keySet();
+            List<MutatorEntity> mutatorEntities = new ArrayList<>();
 
-            for (int i = 0; i < mutatorIdentifiers.size(); i++) {
+            for (String mutator : mutatorIdentifiers) {
                 MutatorEntity mutatorEntity = new MutatorEntity();
-                mutatorEntity.setMid(mutatorIdentifiers.get(i));
+                mutatorEntity.setMid(mutator);
                 mutatorEntity.setType(filterEntry.getKey());
-                mutatorEntities[i] = mutatorEntity;
+                mutatorEntities.add(mutatorEntity);
             }
 
-            new Thread() {
-                @Override
-                public void run() {
-                    LibraryDatabase.getInstance(context).mutatorDAO().insertAll(mutatorEntities);
-                }
-            }.start();
+            new Thread(() -> LibraryDatabase.getInstance(context).mutatorDAO().insertAll(mutatorEntities)).start();
 
         }
     }
@@ -71,27 +68,29 @@ public class PrivacyEnforcingClient implements FilterProvider {
     @Override
     public List<Filter> getFilters() {
         List<Filter> result = new ArrayList<>();
-        Set<String> permissions = preferences.getStringSet(Privacy.PERMISSION_PREFERENCES, new HashSet<>());
+        Set<String> permissions = new HashSet<>(preferences.getStringSet(Privacy.PERMISSION_PREFERENCES, new HashSet<>()));
 
         for (Map.Entry<String, Filter> filterEntry : filters.entrySet()) {
             String permission = filterEntry.getKey();
             Filter filter = filterEntry.getValue();
 
-            String permissionMode = preferences.getString(permission, null);
-            if (permissionMode != null) {
+            String permissionMode = preferences.getString(permission + Privacy.MODE_SUFFIX, null);
+            if (permissionMode == null) {
+                filter.setMode(Privacy.Mutation.BLOCK);
+            } else if (permissionMode.equals("FAKE")) {
+                String mutatorId = preferences.getString(permission + Privacy.MUTATOR_SUFFIX, null);
+                filter.setDataMutator(mutatorId);
                 filter.setMode(Privacy.Mutation.valueOf(permissionMode));
             } else {
-                filter.setMode(Privacy.Mutation.BLOCK);
+                filter.setMode(Privacy.Mutation.valueOf(permissionMode));
             }
             result.add(filter);
 
-            if (permissions != null) permissions.remove(permission);
+            permissions.remove(permission);
         }
 
-        if (permissions != null) {
-            for (String permission : permissions) {
-                Log.w("PrivacyEnforcingClient", "Missing filter for permission: " + permission);
-            }
+        for (String permission : permissions) {
+            Log.w("PrivacyEnforcingClient", "Missing filter for permission: " + permission);
         }
 
         return result;

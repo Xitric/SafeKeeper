@@ -51,7 +51,7 @@ public class PrivacyActivity extends AppCompatActivity implements SendPermission
      */
     public final Privacy.Mutation getSendPermissionState(String permission) {
         SharedPreferences preferences = getPermissionPreferences();
-        String actionString = preferences.getString(permission, null);
+        String actionString = preferences.getString(permission + Privacy.MODE_SUFFIX, null);
 
         if (actionString == null) {
             return Privacy.Mutation.BLOCK;
@@ -127,25 +127,27 @@ public class PrivacyActivity extends AppCompatActivity implements SendPermission
 
         for (int i = 0; i < permissions.length; i++) {
             permissionsSet.add(permissions[i]);
-            preferenceEditor.putString(permissions[i], states[i].toString());
+            preferenceEditor.putString(permissions[i] + Privacy.MODE_SUFFIX, states[i].toString());
         }
 
         preferenceEditor.putStringSet(Privacy.PERMISSION_PREFERENCES, permissionsSet);
         preferenceEditor.apply();
     }
 
+    /**
+     * Set the mutator for the permission.
+     *
+     * @param permission the permission whose mutator to set
+     * @param mutator    the mutator for the permission
+     */
     private void setMutatorPreference(String permission, String mutator) {
         SharedPreferences mutatorPreferences = getPermissionPreferences();
+        String permissionMode = permission + Privacy.MUTATOR_SUFFIX;
 
-        Set<String> permissionsSet = new HashSet<>(mutatorPreferences.getStringSet(Privacy.MUTATOR_PREFERENCES, new HashSet<>()));
         SharedPreferences.Editor preferenceEditor = mutatorPreferences.edit();
 
-        permissionsSet.add(permission);
-        preferenceEditor.putString(permission, mutator);
-
-        preferenceEditor.putStringSet(Privacy.MUTATOR_PREFERENCES, permissionsSet);
+        preferenceEditor.putString(permissionMode, mutator);
         preferenceEditor.apply();
-
     }
 
     private SharedPreferences getPermissionPreferences() {
