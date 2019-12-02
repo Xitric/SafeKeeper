@@ -16,12 +16,14 @@ public class MainActivity extends PrivacyActivity implements MainFragment.OnMain
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.fragment_containerx, new MainFragment());
-        Log.i("CONTAINER_ID", "" + R.id.fragment_containerx);
-        fragmentTransaction.commit();
+        if (savedInstanceState == null) {
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_containerx, new MainFragment());
+            Log.i("CONTAINER_ID", "" + R.id.fragment_containerx);
+            fragmentTransaction.commit();
 
-        new PrivacyEnforcingClient(this); // TODO temp
+            new PrivacyEnforcingClient(this); // TODO temp
+        }
     }
 
     //Called when the requested permissions have been configured by the user
