@@ -1,6 +1,6 @@
 package dk.sdu.privacyenforcer.client.filters;
 
-import dk.sdu.privacyenforcer.ui.Privacy;
+import dk.sdu.privacyenforcer.client.Privacy;
 
 public abstract class AbstractFilter implements Filter {
 
@@ -22,4 +22,5 @@ public abstract class AbstractFilter implements Filter {
     public boolean shouldAbort() {
         return mode == Privacy.Mutation.BLOCK;
     }
+
 }

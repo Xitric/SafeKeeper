@@ -11,8 +11,10 @@ import androidx.fragment.app.FragmentTransaction;
 import java.util.HashSet;
 import java.util.Set;
 
+import dk.sdu.privacyenforcer.client.Privacy;
+
 public class PrivacyActivity extends AppCompatActivity implements SendPermissionsModalFragment.PermissionsModalListener,
-        LocalObfuscationPromptFragment.OnFragmentInteractionListener {
+        LocalObfuscationPromptFragment.OnFragmentInteractionListener, OnMutationChoiceListener {
 
     /**
      * Check whether the user has granted access to send the data represented by the specified
@@ -49,7 +51,7 @@ public class PrivacyActivity extends AppCompatActivity implements SendPermission
      */
     public final Privacy.Mutation getSendPermissionState(String permission) {
         SharedPreferences preferences = getPermissionPreferences();
-        String actionString = preferences.getString(permission, null);
+        String actionString = preferences.getString(permission + Privacy.MODE_SUFFIX, null);
 
         if (actionString == null) {
             return Privacy.Mutation.BLOCK;
@@ -125,10 +127,26 @@ public class PrivacyActivity extends AppCompatActivity implements SendPermission
 
         for (int i = 0; i < permissions.length; i++) {
             permissionsSet.add(permissions[i]);
-            preferenceEditor.putString(permissions[i], states[i].toString());
+            preferenceEditor.putString(permissions[i] + Privacy.MODE_SUFFIX, states[i].toString());
         }
 
         preferenceEditor.putStringSet(Privacy.PERMISSION_PREFERENCES, permissionsSet);
+        preferenceEditor.apply();
+    }
+
+    /**
+     * Set the mutator for the permission.
+     *
+     * @param permission the permission whose mutator to set
+     * @param mutator    the mutator for the permission
+     */
+    private void setMutatorPreference(String permission, String mutator) {
+        SharedPreferences mutatorPreferences = getPermissionPreferences();
+        String permissionMode = permission + Privacy.MUTATOR_SUFFIX;
+
+        SharedPreferences.Editor preferenceEditor = mutatorPreferences.edit();
+
+        preferenceEditor.putString(permissionMode, mutator);
         preferenceEditor.apply();
     }
 
@@ -156,5 +174,15 @@ public class PrivacyActivity extends AppCompatActivity implements SendPermission
     @Override
     public void onFragmentInteraction(Location fakeLocation) {
         Log.i("FakeLocation", "Lat: " + fakeLocation.getLatitude() + " Lon: " + fakeLocation.getLongitude());
+    }
+
+    @Override
+    public void onMutationChoiceInteraction(String permission, Privacy.Mutation state) {
+        setSendPermissions(new String[]{permission}, new Privacy.Mutation[]{state});
+    }
+
+    @Override
+    public void onMutatorChoiceInteraction(String permission, String mutator) {
+        setMutatorPreference(permission, mutator);
     }
 }

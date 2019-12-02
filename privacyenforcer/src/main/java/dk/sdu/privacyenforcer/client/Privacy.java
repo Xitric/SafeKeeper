@@ -1,4 +1,4 @@
-package dk.sdu.privacyenforcer.ui;
+package dk.sdu.privacyenforcer.client;
 
 /**
  * Interface containing constants for configuring privacy settings.
@@ -14,6 +14,21 @@ public interface Privacy {
      * The key for the preference storing a set of all configured permissions.
      */
     String PERMISSION_PREFERENCES = "privacyenforcer_permissions";
+
+    /**
+     * The key for the mutator set that stores all mutator choices.
+     */
+    String MUTATOR_PREFERENCES = "privacyenforcer_mutators";
+
+    /**
+     * The suffix for specifying that a permission key is used as a mode
+     */
+    String MODE_SUFFIX = "mode";
+
+    /**
+     * The suffix for specifying that a permission key is used as a mutator
+     */
+    String MUTATOR_SUFFIX = "mutator";
 
     /**
      * Enum for representing the action to take in regards to various types of data. Data can either
@@ -34,4 +49,10 @@ public interface Privacy {
         String SEND_CONTACTS = "privacyenforcer_permission_SEND_CONTACTS";
         String SEND_ACCELERATION = "privacyenforcer_permission_SEND_ACCELERATION";
     }
+
+    interface LocationMutators {
+        String LOCAL_OBFUSCATION = "privacyenforcer_location_mutator_LOCAL_OBFUSCATION";
+        String K_ANONYMITY = "privacyenforcer_location_mutator_K_ANONYMITY";
+    }
+
 }
