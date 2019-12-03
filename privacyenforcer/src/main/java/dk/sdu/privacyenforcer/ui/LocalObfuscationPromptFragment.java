@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -80,6 +81,8 @@ public class LocalObfuscationPromptFragment extends DialogFragment {
 
         if (listener != null && fakeLocation != null) {
             listener.onFragmentInteraction(fakeLocation);
+        } else {
+            Toast.makeText(getContext(), "Error, fake location went wrong", Toast.LENGTH_LONG).show();
         }
         dismiss();
 

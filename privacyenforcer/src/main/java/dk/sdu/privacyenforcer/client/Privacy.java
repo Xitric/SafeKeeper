@@ -16,6 +16,21 @@ public interface Privacy {
     String PERMISSION_PREFERENCES = "privacyenforcer_permissions";
 
     /**
+     * The key for the mutator set that stores all mutator choices.
+     */
+    String MUTATOR_PREFERENCES = "privacyenforcer_mutators";
+
+    /**
+     * The suffix for specifying that a permission key is used as a mode
+     */
+    String MODE_SUFFIX = "mode";
+
+    /**
+     * The suffix for specifying that a permission key is used as a mutator
+     */
+    String MUTATOR_SUFFIX = "mutator";
+
+    /**
      * Enum for representing the action to take in regards to various types of data. Data can either
      * be allowed in all outgoing requests, it can be blocked entirely, or it can be substituted
      * with fake counterparts.
@@ -36,8 +51,8 @@ public interface Privacy {
     }
 
     interface LocationMutators {
-        String OBFUSCATION = "privacyenforcer_location_mutator_OBFUSCATION";
-        String DUMMY = "privacyenforcer_location_mutator_DUMMY";
+        String LOCAL_OBFUSCATION = "privacyenforcer_location_mutator_LOCAL_OBFUSCATION";
+        String K_ANONYMITY = "privacyenforcer_location_mutator_K_ANONYMITY";
     }
 
 }

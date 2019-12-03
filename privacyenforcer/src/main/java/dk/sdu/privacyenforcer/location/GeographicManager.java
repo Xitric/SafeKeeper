@@ -22,10 +22,10 @@ public class GeographicManager {
         double latitude = computeNewLatitude(location, randomAreaWidth);
         double longitude = computeNewLongitude(location, randomAreaHeight);
 
-        Location l = new Location("GeographicManager");
-        l.setLatitude(latitude);
-        l.setLongitude(longitude);
-        return l;
+        Location fakeLocation = new Location("GeographicManager");
+        fakeLocation.setLatitude(latitude);
+        fakeLocation.setLongitude(longitude);
+        return fakeLocation;
     }
 
     /**
