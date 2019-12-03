@@ -1,9 +1,11 @@
 package dk.sdu.safekeeper;
 
 import android.os.Bundle;
+import android.os.Messenger;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -71,17 +73,25 @@ public class MessengerActivity extends AppCompatActivity {
                         ))
                 ));
 
+                //Sends dummy message and updates UI with echoed result
                 messengerService.sendLocationData(payload).enqueue(new Callback<MessengerLocationPayload>() {
                     @Override
                     @EverythingIsNonNull
                     public void onResponse(Call<MessengerLocationPayload> call, Response<MessengerLocationPayload> response) {
-
+                        if (response.isSuccessful()) {
+                            Attachment echo = response.body().getEntry().get(0).getMessaging().get(0).getMessage().getAttachments().get(0);
+                            messageLabel.setText(echo.getTitle());
+                            latitudeLabel.setText(String.valueOf(echo.getPayload().getCoordinates().getLat()));
+                            longitudeLabel.setText(String.valueOf(echo.getPayload().getCoordinates().getLong()));
+                        } else {
+                            onFailure(call, new IllegalStateException("Response was not successful"));
+                        }
                     }
 
                     @Override
                     @EverythingIsNonNull
                     public void onFailure(Call<MessengerLocationPayload> call, Throwable t) {
-
+                        Toast.makeText(MessengerActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
