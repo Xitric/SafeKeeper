@@ -38,14 +38,17 @@ public class MainFragment extends Fragment {
         Button requestPermissionsButton = view.findViewById(R.id.btn_request_permissions);
         Button weatherButton = view.findViewById(R.id.btn_weather);
         Button obfuscationButton = view.findViewById(R.id.btn_local_obfuscation);
+        Button performanceButton = view.findViewById(R.id.btn_performance);
+        Button messengerButton = view.findViewById(R.id.btn_messenger);
 
         settingsButton.setOnClickListener(v -> onSettingsAction());
         requestPermissionsButton.setOnClickListener(v -> onRequestPermissionsAction());
         weatherButton.setOnClickListener(v -> onWeatherAction());
         obfuscationButton.setOnClickListener(v -> onLocalObfuscationAction());
+        performanceButton.setOnClickListener(v -> onPerformanceAction());
+        messengerButton.setOnClickListener(v -> onMessengerAction());
 
         return view;
-
     }
 
     public void onSettingsAction() {
@@ -66,10 +69,8 @@ public class MainFragment extends Fragment {
         listener.onLocalObfuscation();
     }
 
-
     public void onRequestPermissionsAction() {
         //Request permissions for sending information over a network
-
         listener.onRequestPermissions(
                 new String[]{
                         Privacy.Permission.SEND_LOCATION,
@@ -82,10 +83,20 @@ public class MainFragment extends Fragment {
                 });
     }
 
+    public void onPerformanceAction() {
+        Intent startPerformance = new Intent(getActivity(), PerformanceActivity.class);
+        startActivity(startPerformance);
+    }
+
+    public void onMessengerAction() {
+        Intent startMessenger = new Intent(getActivity(), MessengerActivity.class);
+        startActivity(startMessenger);
+    }
+
+
     public interface OnMainFragmentInteractionListener {
         void onLocalObfuscation();
 
         void onRequestPermissions(String[] permissions, String[] explanations);
     }
-
 }

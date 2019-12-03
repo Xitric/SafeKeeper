@@ -40,7 +40,6 @@ public class MainActivity extends PrivacyActivity implements MainFragment.OnMain
 
     }
 
-
     @Override
     public void onLocalObfuscation() {
         setLocalObfuscationArea();

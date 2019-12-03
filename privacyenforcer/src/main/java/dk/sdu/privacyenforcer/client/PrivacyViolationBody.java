@@ -6,15 +6,17 @@ import dk.sdu.privacyenforcer.client.mutators.DataMutator;
 
 public class PrivacyViolationBody extends PrivacyViolation {
 
-    private JSONObject[] flaggedObjects;
+    private JSONObject body;
+    private String[] flaggedElements;
 
-    public PrivacyViolationBody(DataMutator mutator, JSONObject[] flaggedObjects) {
+    public PrivacyViolationBody(DataMutator mutator, JSONObject body, String[] flaggedElements) {
         super(mutator);
-        this.flaggedObjects = flaggedObjects;
+        this.body = body;
+        this.flaggedElements = flaggedElements;
     }
 
     @Override
     public void resolve() {
-        getMutator().mutate(flaggedObjects);
+        getMutator().mutate(body, flaggedElements);
     }
 }
