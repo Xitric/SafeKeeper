@@ -5,9 +5,6 @@ import android.content.Context;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 
 import dk.sdu.privacyenforcer.client.PrivacyEnforcingClient;

@@ -9,8 +9,6 @@ import androidx.room.RoomDatabase;
 @Database(entities = {MutatorEntity.class}, version = 1, exportSchema = false)
 public abstract class LibraryDatabase extends RoomDatabase {
 
-    public abstract MutatorDAO mutatorDAO();
-
     private static LibraryDatabase instance;
 
     public static LibraryDatabase getInstance(Context context) {
@@ -24,5 +22,7 @@ public abstract class LibraryDatabase extends RoomDatabase {
         instance.close();
         instance = null;
     }
+
+    public abstract MutatorDAO mutatorDAO();
 
 }

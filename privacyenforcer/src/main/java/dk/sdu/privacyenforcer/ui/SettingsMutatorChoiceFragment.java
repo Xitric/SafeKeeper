@@ -93,5 +93,4 @@ public class SettingsMutatorChoiceFragment extends PreferenceFragmentCompat {
         String info = "Saved " + Privacy.Mutation.FAKE.name() + " setting with " + title;
         Toast.makeText(getContext(), info, Toast.LENGTH_SHORT).show();
     }
-
 }

@@ -1,7 +1,6 @@
 package dk.sdu.safekeeper;
 
 import android.os.Bundle;
-import android.os.Messenger;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;

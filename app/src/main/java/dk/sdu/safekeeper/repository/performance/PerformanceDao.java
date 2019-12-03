@@ -1,13 +1,10 @@
 package dk.sdu.safekeeper.repository.performance;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static androidx.room.OnConflictStrategy.REPLACE;

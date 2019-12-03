@@ -61,7 +61,6 @@ public class PrivacyEnforcingClient implements FilterProvider {
             }
 
             new Thread(() -> LibraryDatabase.getInstance(context).mutatorDAO().insertAll(mutatorEntities)).start();
-
         }
     }
 

@@ -1,8 +1,6 @@
 package dk.sdu.privacyenforcer.ui;
 
 import android.content.SharedPreferences;
-import android.location.Location;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
@@ -13,8 +11,7 @@ import java.util.Set;
 
 import dk.sdu.privacyenforcer.client.Privacy;
 
-public class PrivacyActivity extends AppCompatActivity implements SendPermissionsModalFragment.PermissionsModalListener,
-        LocalObfuscationPromptFragment.OnFragmentInteractionListener, OnMutationChoiceListener {
+public class PrivacyActivity extends AppCompatActivity implements SendPermissionsModalFragment.PermissionsModalListener, OnMutationChoiceListener {
 
     /**
      * Check whether the user has granted access to send the data represented by the specified
@@ -73,31 +70,10 @@ public class PrivacyActivity extends AppCompatActivity implements SendPermission
      * @param explanations strings explaining the intended use of the permissions
      */
     public final void requestSendPermissions(String[] permissions, String[] explanations) {
-        //TODO: uncomment to stop requesting user input for allowed permissions
-//        List<String> permissionsList = new ArrayList<>(Arrays.asList(permissions));
-//        List<String> explanationsList = new ArrayList<>(Arrays.asList(explanations));
-//
-//        filterAllowedPermissions(permissionsList, explanationsList);
-//        if (permissionsList.isEmpty()) return;
-//
-//        permissions = permissionsList.toArray(new String[0]);
-//        explanations = explanationsList.toArray(new String[0]);
-
         DialogFragment newFragment = SendPermissionsModalFragment.newInstance(permissions, explanations);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         newFragment.show(transaction, null);
     }
-
-    //TODO: uncomment to stop requesting user input for allowed permissions
-//    private void filterAllowedPermissions(List<String> permissions, List<String> explanations) {
-//        for (int i = 0; i < permissions.size(); i++) {
-//            if (checkSendPermission(permissions.get(i))) {
-//                permissions.remove(i);
-//                explanations.remove(i);
-//                i--;
-//            }
-//        }
-//    }
 
     /**
      * Called when the user has made a decision regarding a set of permissions, which were requested
@@ -169,11 +145,6 @@ public class PrivacyActivity extends AppCompatActivity implements SendPermission
         DialogFragment dialogFragment = LocalObfuscationPromptFragment.newInstance();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         dialogFragment.show(transaction, null);
-    }
-
-    @Override
-    public void onFragmentInteraction(Location fakeLocation) {
-        Log.i("FakeLocation", "Lat: " + fakeLocation.getLatitude() + " Lon: " + fakeLocation.getLongitude());
     }
 
     @Override
