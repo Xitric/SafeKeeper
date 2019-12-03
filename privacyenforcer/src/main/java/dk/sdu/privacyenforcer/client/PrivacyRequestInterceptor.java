@@ -2,6 +2,8 @@ package dk.sdu.privacyenforcer.client;
 
 import androidx.annotation.NonNull;
 
+import org.json.JSONObject;
+
 import java.io.IOException;
 
 import okhttp3.Interceptor;
@@ -17,7 +19,7 @@ class PrivacyRequestInterceptor implements Interceptor {
     private final FilterEngine filterEngine;
 
     PrivacyRequestInterceptor(FilterEngine filterEngine) {
-        parser = new RequestBodyParser();
+        this.parser = new RequestBodyParser();
         this.filterEngine = filterEngine;
     }
 
@@ -25,14 +27,12 @@ class PrivacyRequestInterceptor implements Interceptor {
     @NonNull
     public Response intercept(@NonNull Chain chain) throws IOException {
         okhttp3.RequestBody originalBody = chain.request().body();
-        if (originalBody == null) {
-            return chain.proceed(chain.request());
-        }
 
-        RequestBody context = parser.toInternalBody(originalBody);
-        ViolationCollection violations = filterEngine.applyFilters(context);
+        RequestUrl url = new RequestUrl(chain.request().url());
+        JSONObject body = parser.toJson(originalBody);
+        ViolationCollection violations = filterEngine.applyFilters(url, body);
 
-        if(violations.isAborted()) {
+        if (violations.isAborted()) {
             return new Response.Builder()
                     .code(404)
                     .protocol(Protocol.HTTP_2)
@@ -42,12 +42,13 @@ class PrivacyRequestInterceptor implements Interceptor {
                     .build();
         }
 
-        violations.resolveViolations(context);
+        violations.resolve();
 
-        //Here we would write the request body back into a sink and update the content of the
-        //original request
-        okhttp3.RequestBody newBody = parser.toOkHttpBody(context);
-        Request newRequest = chain.request().newBuilder().method(chain.request().method(), newBody).build();
-        return chain.proceed(newRequest);
+        Request.Builder newRequestBuilder = chain.request().newBuilder().url(url.getUrl());
+        if (body != null) {
+            okhttp3.RequestBody newBody = parser.toHttpBody(body);
+            newRequestBuilder.method(chain.request().method(), newBody);
+        }
+        return chain.proceed(newRequestBuilder.build());
     }
 }

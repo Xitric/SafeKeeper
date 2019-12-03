@@ -12,3 +12,8 @@
 /captures
 .externalNativeBuild
 .cxx
+
+.idea/dictionaries/
+
+app/schemas/
+privacyenforcer/schemas/

@@ -1,36 +1,52 @@
 package dk.sdu.safekeeper;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
+import android.util.Log;
 
-import dk.sdu.safekeeper.repository.PlaceholderClient;
-import dk.sdu.safekeeper.repository.PlaceholderData;
-import dk.sdu.safekeeper.repository.ServerResponse;
-import okhttp3.internal.annotations.EverythingIsNonNull;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import androidx.fragment.app.FragmentTransaction;
 
-public class MainActivity extends AppCompatActivity {
+import dk.sdu.privacyenforcer.client.Privacy;
+import dk.sdu.privacyenforcer.client.PrivacyEnforcingClient;
+import dk.sdu.privacyenforcer.ui.PrivacyActivity;
+
+public class MainActivity extends PrivacyActivity implements MainFragment.OnMainFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        PlaceholderClient.getService(getApplicationContext()).postsomeStuff(new PlaceholderData("Kasper", 24, 1.96)).enqueue(new Callback<ServerResponse>() {
-            @Override
-            @EverythingIsNonNull
-            public void onResponse(Call<ServerResponse> call, Response<ServerResponse> response) {
-                System.out.println();
-            }
+        if (savedInstanceState == null) {
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_containerx, new MainFragment());
+            Log.i("CONTAINER_ID", "" + R.id.fragment_containerx);
+            fragmentTransaction.commit();
 
-            @Override
-            @EverythingIsNonNull
-            public void onFailure(Call<ServerResponse> call, Throwable t) {
+            new PrivacyEnforcingClient(this); // TODO temp
+        }
+    }
 
-            }
-        });
+    //Called when the requested permissions have been configured by the user
+    @Override
+    public void onRequestSendPermissionsResult(String[] permissions, Privacy.Mutation[] results) {
+        if (results.length == 0) {
+            Log.i("PermissionResult", "User cancelled the permissions request");
+            return;
+        }
+
+        for (int i = 0; i < permissions.length; i++) {
+            Log.i("PermissionResult", "For the permission " + permissions[i] + " the user selected " + results[i]);
+        }
+
+    }
+
+    @Override
+    public void onLocalObfuscation() {
+        setLocalObfuscationArea();
+    }
+
+    @Override
+    public void onRequestPermissions(String[] permissions, String[] explanations) {
+        requestSendPermissions(permissions, explanations);
     }
 }

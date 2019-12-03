@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">SafeKeeper</string>
+    <string name="weather_location">The weather at %1$s is</string>
+    <string name="update">Update</string>
+    <string name="temperature">Temperature: %1$.1f°</string>
+    <string name="humidity">Humidity: %1$d</string>
+    <string name="weather">Weather</string>
+    <string name="weather_error">Error: Weather service unavailable</string>
 </resources>
