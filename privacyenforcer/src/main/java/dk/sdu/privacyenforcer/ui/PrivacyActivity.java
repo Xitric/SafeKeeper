@@ -11,7 +11,7 @@ import java.util.Set;
 
 import dk.sdu.privacyenforcer.client.Privacy;
 
-public class PrivacyActivity extends AppCompatActivity implements SendPermissionsModalFragment.PermissionsModalListener, OnMutationChoiceListener {
+public class PrivacyActivity extends AppCompatActivity implements SendPermissionsModalFragment.PermissionsModalListener {
 
     /**
      * Check whether the user has granted access to send the data represented by the specified
@@ -141,19 +141,10 @@ public class PrivacyActivity extends AppCompatActivity implements SendPermission
         onRequestSendPermissionsResult(permissions, states);
     }
 
-    public final void setLocalObfuscationArea() {
-        DialogFragment dialogFragment = LocalObfuscationPromptFragment.newInstance();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        dialogFragment.show(transaction, null);
-    }
-
-    @Override
-    public void onMutationChoiceInteraction(String permission, Privacy.Mutation state) {
-        setSendPermissions(new String[]{permission}, new Privacy.Mutation[]{state});
-    }
-
-    @Override
-    public void onMutatorChoiceInteraction(String permission, String mutator) {
-        setMutatorPreference(permission, mutator);
-    }
+    //TODO: Redo
+//    public final void setLocalObfuscationArea() {
+//        DialogFragment dialogFragment = LocalObfuscationPromptFragment.newInstance();
+//        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//        dialogFragment.show(transaction, null);
+//    }
 }

@@ -81,7 +81,7 @@ public class SendPermissionsModalFragment extends DialogFragment {
 
     private void setPermissionText(String permission) {
         assert getContext() != null;
-        String permissionLocalizedName = PermissionHelper.getPermissionText(permission, getContext());
+        String permissionLocalizedName = PermissionStringHelper.getAsName(permission, getContext());
         lblPermission.setText(getString(R.string.permission_header, permissionLocalizedName));
     }
 

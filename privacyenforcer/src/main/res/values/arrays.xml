@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="permission_mode_entries">
+        <item>@string/ALLOW</item>
+        <item>@string/BLOCK</item>
+        <item>@string/FAKE</item>
+    </string-array>
+    <string-array name="permission_mode_values">
+        <item>ALLOW</item>
+        <item>BLOCK</item>
+        <item>FAKE</item>
+    </string-array>
+</resources>
