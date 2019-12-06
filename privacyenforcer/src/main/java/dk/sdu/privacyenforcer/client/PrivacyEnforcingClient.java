@@ -14,6 +14,7 @@ import java.util.Set;
 import dk.sdu.privacyenforcer.client.filters.Filter;
 import dk.sdu.privacyenforcer.client.filters.FineLocationFilter;
 import dk.sdu.privacyenforcer.client.repository.LibraryDatabase;
+import dk.sdu.privacyenforcer.client.repository.MutatorDAO;
 import dk.sdu.privacyenforcer.client.repository.MutatorEntity;
 import dk.sdu.privacyenforcer.location.BatteryConservingLocationReceiver;
 import okhttp3.OkHttpClient;
@@ -22,15 +23,15 @@ public class PrivacyEnforcingClient implements FilterProvider {
 
     private SharedPreferences preferences;
     private Map<String, Filter> filters;
-    private Context context;
+    private MutatorDAO mutatorDao;
 
     public PrivacyEnforcingClient(Context context) {
-        this.context = context;
-        preferences = this.context.getSharedPreferences(Privacy.PERMISSION_PREFERENCE_FILE, Context.MODE_PRIVATE);
+        preferences = context.getSharedPreferences(Privacy.PERMISSION_PREFERENCE_FILE, Context.MODE_PRIVATE);
+        mutatorDao = LibraryDatabase.getInstance(context).mutatorDAO();
         filters = new HashMap<>();
 
         registerFilter(Privacy.Permission.SEND_LOCATION, new FineLocationFilter(new BatteryConservingLocationReceiver(context)));
-        registerMutators(context);
+        registerMutators();
     }
 
     public OkHttpClient.Builder getClientBuilder() {
@@ -48,7 +49,7 @@ public class PrivacyEnforcingClient implements FilterProvider {
     }
 
 
-    public void registerMutators(Context context) {
+    public void registerMutators() {
         for (Map.Entry<String, Filter> filterEntry : filters.entrySet()) {
             Set<String> mutatorIdentifiers = filterEntry.getValue().getMutators().keySet();
             List<MutatorEntity> mutatorEntities = new ArrayList<>();
@@ -60,7 +61,7 @@ public class PrivacyEnforcingClient implements FilterProvider {
                 mutatorEntities.add(mutatorEntity);
             }
 
-            new Thread(() -> LibraryDatabase.getInstance(context).mutatorDAO().insertAll(mutatorEntities)).start();
+            new Thread(() -> mutatorDao.insertAll(mutatorEntities)).start();
         }
     }
 

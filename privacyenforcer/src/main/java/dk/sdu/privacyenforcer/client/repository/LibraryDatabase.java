@@ -18,11 +18,5 @@ public abstract class LibraryDatabase extends RoomDatabase {
         return instance;
     }
 
-    public static void destroyInstance() {
-        instance.close();
-        instance = null;
-    }
-
     public abstract MutatorDAO mutatorDAO();
-
 }
