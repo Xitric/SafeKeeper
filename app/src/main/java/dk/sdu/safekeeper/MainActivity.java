@@ -44,9 +44,9 @@ public class MainActivity extends PrivacyActivity {
     }
 
     //TODO: Redo
-//    public void onLocalObfuscationAction(View sender) {
+    public void onLocalObfuscationAction(View sender) {
 //        setLocalObfuscationArea();
-//    }
+    }
 
     public void onRequestPermissionsAction(View sender) {
         //Request permissions for sending information over a network

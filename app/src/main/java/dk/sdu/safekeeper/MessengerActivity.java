@@ -1,11 +1,14 @@
 package dk.sdu.safekeeper;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -14,6 +17,8 @@ import com.google.android.gms.location.LocationServices;
 import java.util.Collections;
 import java.util.Date;
 
+import dk.sdu.privacyenforcer.client.Privacy;
+import dk.sdu.privacyenforcer.ui.PrivacyActivity;
 import dk.sdu.safekeeper.repository.messenger.MessengerClient;
 import dk.sdu.safekeeper.repository.messenger.MessengerService;
 import dk.sdu.safekeeper.repository.messenger.vo.Attachment;
@@ -30,7 +35,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MessengerActivity extends AppCompatActivity {
+public class MessengerActivity extends PrivacyActivity {
 
     private EditText textInput;
     private TextView messageLabel;
@@ -52,6 +57,24 @@ public class MessengerActivity extends AppCompatActivity {
 
         messengerService = MessengerClient.getService(this);
         locationManager = LocationServices.getFusedLocationProviderClient(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        ensurePermissions();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        ensurePermissions();
+    }
+
+    private void ensurePermissions() {
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+        }
     }
 
     public void onSendAction(View sender) {
