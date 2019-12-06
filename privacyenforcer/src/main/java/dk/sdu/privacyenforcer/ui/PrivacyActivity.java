@@ -1,21 +1,34 @@
 package dk.sdu.privacyenforcer.ui;
 
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import dk.sdu.privacyenforcer.PermissionPreferenceUtil;
 import dk.sdu.privacyenforcer.client.Privacy;
 
 public class PrivacyActivity extends AppCompatActivity implements SendPermissionsModalFragment.PermissionsModalListener {
 
+    //TODO: Call it mode instead of state or action
+    //TODO: Update method names and documentation in PrivacyActivity
+
+    private PermissionPreferenceUtil preferenceUtil;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        SharedPreferences sharedPreferences = getSharedPreferences(Privacy.PERMISSION_PREFERENCE_FILE, Context.MODE_PRIVATE);
+        preferenceUtil = new PermissionPreferenceUtil(sharedPreferences);
+    }
+
     /**
      * Check whether the user has granted access to send the data represented by the specified
-     * permission. Specifically, this checks if the state of the permission is
+     * permission. Specifically, this checks if the mode of the permission is
      * {@link Privacy.Mutation#ALLOW}.
      *
      * @param permission the permission to check for
@@ -26,40 +39,17 @@ public class PrivacyActivity extends AppCompatActivity implements SendPermission
     }
 
     /**
-     * Check whether the state of the specified permission matches the specified mutation action. If
-     * no mutation action has been set for the specified permission, it will implicitly be
-     * interpreted as {@link Privacy.Mutation#BLOCK}.
+     * Check whether the mode of the specified permission matches the specified mode. If no mode has
+     * been set for the specified permission, it will implicitly be interpreted as
+     * {@link Privacy.Mutation#BLOCK}.
      *
      * @param permission the permission to check for
-     * @param state      the mutation action to compare with
-     * @return {@code true} if the state of the permission matched the action, {@code false}
+     * @param mode       the mode to compare with
+     * @return {@code true} if the mode of the permission matched the specified mode, {@code false}
      * otherwise
      */
-    public final boolean checkSendPermission(String permission, Privacy.Mutation state) {
-        return state == getSendPermissionState(permission);
-    }
-
-    /**
-     * Get the mutation action configured for the specified permission.
-     *
-     * @param permission the permission whose mutation action to get
-     * @return the mutation action of the specified permission. If no action has been set, this
-     * defaults to {@link Privacy.Mutation#BLOCK}
-     */
-    public final Privacy.Mutation getSendPermissionState(String permission) {
-        SharedPreferences preferences = getPermissionPreferences();
-        String actionString = preferences.getString(permission + Privacy.MODE_SUFFIX, null);
-
-        if (actionString == null) {
-            return Privacy.Mutation.BLOCK;
-        }
-
-        try {
-            return Privacy.Mutation.valueOf(actionString);
-        } catch (IllegalArgumentException ignored) {
-            //An action has been configured, but it is somehow unknown
-            return Privacy.Mutation.BLOCK;
-        }
+    public final boolean checkSendPermission(String permission, Privacy.Mutation mode) {
+        return mode == preferenceUtil.getPermissionMode(permission);
     }
 
     /**
@@ -90,24 +80,13 @@ public class PrivacyActivity extends AppCompatActivity implements SendPermission
     }
 
     /**
-     * Set the states of the specified permissions.
+     * Set the modes of the specified permissions.
      *
-     * @param permissions the permissions whose state to set
-     * @param states      the mutation actions to set
+     * @param permissions the permissions whose mode to set
+     * @param modes       the mutation modes to set
      */
-    private void setSendPermissions(String[] permissions, Privacy.Mutation[] states) {
-        SharedPreferences preferences = getPermissionPreferences();
-
-        Set<String> permissionsSet = new HashSet<>(preferences.getStringSet(Privacy.PERMISSION_PREFERENCES, new HashSet<>()));
-        SharedPreferences.Editor preferenceEditor = preferences.edit();
-
-        for (int i = 0; i < permissions.length; i++) {
-            permissionsSet.add(permissions[i]);
-            preferenceEditor.putString(permissions[i] + Privacy.MODE_SUFFIX, states[i].toString());
-        }
-
-        preferenceEditor.putStringSet(Privacy.PERMISSION_PREFERENCES, permissionsSet);
-        preferenceEditor.apply();
+    private void setSendPermissions(String[] permissions, Privacy.Mutation[] modes) {
+        preferenceUtil.savePermissions(permissions, modes);
     }
 
     /**
@@ -117,17 +96,7 @@ public class PrivacyActivity extends AppCompatActivity implements SendPermission
      * @param mutator    the mutator for the permission
      */
     private void setMutatorPreference(String permission, String mutator) {
-        SharedPreferences mutatorPreferences = getPermissionPreferences();
-        String permissionMode = permission + Privacy.MUTATOR_SUFFIX;
-
-        SharedPreferences.Editor preferenceEditor = mutatorPreferences.edit();
-
-        preferenceEditor.putString(permissionMode, mutator);
-        preferenceEditor.apply();
-    }
-
-    private SharedPreferences getPermissionPreferences() {
-        return getSharedPreferences(Privacy.PERMISSION_PREFERENCE_FILE, MODE_PRIVATE);
+        preferenceUtil.saveMutator(permission, mutator);
     }
 
     @Override
@@ -136,9 +105,9 @@ public class PrivacyActivity extends AppCompatActivity implements SendPermission
     }
 
     @Override
-    public final void onPermissionSelectionResult(String[] permissions, Privacy.Mutation[] states) {
-        setSendPermissions(permissions, states);
-        onRequestSendPermissionsResult(permissions, states);
+    public final void onPermissionSelectionResult(String[] permissions, Privacy.Mutation[] modes) {
+        setSendPermissions(permissions, modes);
+        onRequestSendPermissionsResult(permissions, modes);
     }
 
     //TODO: Redo

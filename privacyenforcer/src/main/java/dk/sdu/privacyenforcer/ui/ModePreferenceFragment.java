@@ -116,6 +116,9 @@ public class ModePreferenceFragment extends DynamicPreferenceFragment {
 
         @Override
         public CharSequence provideSummary(ListPreference preference) {
+            if (preference.getValue() == null) {
+                return "None";
+            }
             return PermissionStringHelper.getAsTitle(preference.getValue(), preference.getContext());
         }
     }

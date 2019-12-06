@@ -1,6 +1,5 @@
 package dk.sdu.privacyenforcer;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 
 import java.util.HashSet;
@@ -25,8 +24,36 @@ public class PermissionPreferenceUtil {
 
         if (storedMode == null) {
             return Privacy.Mutation.BLOCK;
-        } else {
-            return Privacy.Mutation.valueOf(storedMode);
         }
+
+        try {
+            return Privacy.Mutation.valueOf(storedMode);
+        } catch (IllegalArgumentException ignored) {
+            //A mode has been configured, but it is somehow unknown
+            return Privacy.Mutation.BLOCK;
+        }
+    }
+
+    public void savePermissions(String[] permissions, Privacy.Mutation[] modes) {
+        Set<String> permissionsSet = getPermissions();
+        SharedPreferences.Editor preferenceEditor = sharedPreferences.edit();
+
+        for (int i = 0; i < permissions.length; i++) {
+            permissionsSet.add(permissions[i]);
+            preferenceEditor.putString(permissions[i] + Privacy.MODE_SUFFIX, modes[i].toString());
+        }
+
+        preferenceEditor.putStringSet(Privacy.PERMISSION_PREFERENCES, permissionsSet);
+        preferenceEditor.apply();
+    }
+
+    public String getMutator(String permission) {
+        return sharedPreferences.getString(permission + Privacy.MUTATOR_SUFFIX, null);
+    }
+
+    public void saveMutator(String permission, String mutator) {
+        SharedPreferences.Editor preferenceEditor = sharedPreferences.edit();
+        preferenceEditor.putString(permission + Privacy.MUTATOR_SUFFIX, mutator);
+        preferenceEditor.apply();
     }
 }

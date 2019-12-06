@@ -57,7 +57,7 @@ public class SendPermissionsModalFragment extends DialogFragment {
         viewModel.isComplete().observe(this, complete -> {
             if (complete) {
                 dismiss();
-                listener.onPermissionSelectionResult(viewModel.getPermissions(), viewModel.getStates());
+                listener.onPermissionSelectionResult(viewModel.getPermissions(), viewModel.getModes());
             }
         });
     }
@@ -94,6 +94,6 @@ public class SendPermissionsModalFragment extends DialogFragment {
     public interface PermissionsModalListener {
         void onPermissionSelectionCancelled(String[] permissions);
 
-        void onPermissionSelectionResult(String[] permissions, Privacy.Mutation[] states);
+        void onPermissionSelectionResult(String[] permissions, Privacy.Mutation[] modes);
     }
 }

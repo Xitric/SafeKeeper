@@ -17,7 +17,7 @@
     <string name="BLOCK">block</string>
     <string name="FAKE">fake</string>
 
-    <string name="choose_permission">Choose a permission</string>
+    <string name="choose_permission">Choose a permission mode</string>
     <string name="choose_mutator">Choose a mutator</string>
     <string name="category_mutator">Advanced settings</string>
     <string name="category_mode">Permission settings</string>
