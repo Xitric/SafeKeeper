@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import dk.sdu.privacyenforcer.PermissionPreferenceUtil;
 import dk.sdu.privacyenforcer.client.filters.Filter;
 import dk.sdu.privacyenforcer.client.filters.FineLocationFilter;
 import dk.sdu.privacyenforcer.client.repository.LibraryDatabase;
@@ -21,12 +22,13 @@ import okhttp3.OkHttpClient;
 
 public class PrivacyEnforcingClient implements FilterProvider {
 
-    private SharedPreferences preferences;
+    private PermissionPreferenceUtil preferenceUtil;
     private Map<String, Filter> filters;
     private MutatorDAO mutatorDao;
 
     public PrivacyEnforcingClient(Context context) {
-        preferences = context.getSharedPreferences(Privacy.PERMISSION_PREFERENCE_FILE, Context.MODE_PRIVATE);
+        SharedPreferences preferences = context.getSharedPreferences(Privacy.PERMISSION_PREFERENCE_FILE, Context.MODE_PRIVATE);
+        preferenceUtil = new PermissionPreferenceUtil(preferences);
         mutatorDao = LibraryDatabase.getInstance(context).mutatorDAO();
         filters = new HashMap<>();
 
@@ -68,24 +70,20 @@ public class PrivacyEnforcingClient implements FilterProvider {
     @Override
     public List<Filter> getFilters() {
         List<Filter> result = new ArrayList<>();
-        Set<String> permissions = new HashSet<>(preferences.getStringSet(Privacy.PERMISSION_PREFERENCES, new HashSet<>()));
+        Set<String> permissions = new HashSet<>(preferenceUtil.getPermissions());
 
         for (Map.Entry<String, Filter> filterEntry : filters.entrySet()) {
             String permission = filterEntry.getKey();
             Filter filter = filterEntry.getValue();
 
-            String permissionMode = preferences.getString(permission + Privacy.MODE_SUFFIX, null);
-            if (permissionMode == null) {
-                filter.setMode(Privacy.Mutation.BLOCK);
-            } else if (permissionMode.equals("FAKE")) {
-                String mutatorId = preferences.getString(permission + Privacy.MUTATOR_SUFFIX, null);
-                filter.setDataMutator(mutatorId);
-                filter.setMode(Privacy.Mutation.valueOf(permissionMode));
-            } else {
-                filter.setMode(Privacy.Mutation.valueOf(permissionMode));
-            }
-            result.add(filter);
+            Privacy.Mutation permissionMode = preferenceUtil.getPermissionMode(permission);
+            filter.setMode(permissionMode);
 
+            if (permissionMode == Privacy.Mutation.FAKE) {
+                filter.setDataMutator(preferenceUtil.getMutator(permission));
+            }
+
+            result.add(filter);
             permissions.remove(permission);
         }
 

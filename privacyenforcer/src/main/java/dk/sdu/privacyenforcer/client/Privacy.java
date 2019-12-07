@@ -16,19 +16,14 @@ public interface Privacy {
     String PERMISSION_PREFERENCES = "privacyenforcer_permissions";
 
     /**
-     * The key for the mutator set that stores all mutator choices.
-     */
-    String MUTATOR_PREFERENCES = "privacyenforcer_mutators";
-
-    /**
      * The suffix for specifying that a permission key is used as a mode
      */
-    String MODE_SUFFIX = "mode";
+    String MODE_SUFFIX = "_mode";
 
     /**
      * The suffix for specifying that a permission key is used as a mutator
      */
-    String MUTATOR_SUFFIX = "mutator";
+    String MUTATOR_SUFFIX = "_mutator";
 
     /**
      * Enum for representing the action to take in regards to various types of data. Data can either

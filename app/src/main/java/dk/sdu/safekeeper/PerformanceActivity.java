@@ -1,10 +1,12 @@
 package dk.sdu.safekeeper;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -19,9 +21,10 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import dk.sdu.privacyenforcer.ui.PrivacyActivity;
 import dk.sdu.safekeeper.repository.performance.PerformanceMeasureEntity;
 
-public class PerformanceActivity extends AppCompatActivity {
+public class PerformanceActivity extends PrivacyActivity {
 
     private PerformanceViewModel viewModel;
     private LiveData<List<PerformanceMeasureEntity>> currentMeasures;
@@ -77,6 +80,24 @@ public class PerformanceActivity extends AppCompatActivity {
                 clear();
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        ensurePermissions();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        ensurePermissions();
+    }
+
+    private void ensurePermissions() {
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+        }
     }
 
     private void display(List<PerformanceMeasureEntity> run) {

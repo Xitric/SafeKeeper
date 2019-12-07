@@ -15,7 +15,7 @@ public class SendPermissionsModalViewModel extends ViewModel {
 
     private String[] permissions;
     private String[] explanations;
-    private Privacy.Mutation[] states;
+    private Privacy.Mutation[] modes;
 
     void init(String[] permissions, String[] explanations) {
         if (this.permissions != null && this.explanations != null) {
@@ -24,7 +24,7 @@ public class SendPermissionsModalViewModel extends ViewModel {
 
         this.permissions = permissions;
         this.explanations = explanations;
-        this.states = new Privacy.Mutation[permissions.length];
+        this.modes = new Privacy.Mutation[permissions.length];
     }
 
     LiveData<String> getPermissionName() {
@@ -41,19 +41,19 @@ public class SendPermissionsModalViewModel extends ViewModel {
 
     void grant() {
         assert currentPage.getValue() != null;
-        states[currentPage.getValue()] = Privacy.Mutation.ALLOW;
+        modes[currentPage.getValue()] = Privacy.Mutation.ALLOW;
         nextPage();
     }
 
     void deny() {
         assert currentPage.getValue() != null;
-        states[currentPage.getValue()] = Privacy.Mutation.BLOCK;
+        modes[currentPage.getValue()] = Privacy.Mutation.BLOCK;
         nextPage();
     }
 
     void fake() {
         assert currentPage.getValue() != null;
-        states[currentPage.getValue()] = Privacy.Mutation.FAKE;
+        modes[currentPage.getValue()] = Privacy.Mutation.FAKE;
         nextPage();
     }
 
@@ -70,7 +70,7 @@ public class SendPermissionsModalViewModel extends ViewModel {
         return permissions;
     }
 
-    Privacy.Mutation[] getStates() {
-        return states;
+    Privacy.Mutation[] getModes() {
+        return modes;
     }
 }
