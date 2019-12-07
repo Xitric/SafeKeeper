@@ -110,10 +110,9 @@ public class PrivacyActivity extends AppCompatActivity implements SendPermission
         onRequestSendPermissionsResult(permissions, modes);
     }
 
-    //TODO: Redo
-//    public final void setLocalObfuscationArea() {
-//        DialogFragment dialogFragment = LocalObfuscationPromptFragment.newInstance();
-//        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//        dialogFragment.show(transaction, null);
-//    }
+    public final void setLocalObfuscationArea() {
+        DialogFragment dialogFragment = LocalObfuscationPromptFragment.newInstance();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        dialogFragment.show(transaction, null);
+    }
 }
