@@ -7,6 +7,9 @@ import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/**
+ * Http client used to query the TTP K-anonymity server.
+ */
 public class KAnonymityClient {
 
     private static Retrofit instance;

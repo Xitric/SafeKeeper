@@ -57,7 +57,7 @@ public class SendPermissionsModalFragment extends DialogFragment {
         viewModel.isComplete().observe(this, complete -> {
             if (complete) {
                 dismiss();
-                listener.onPermissionSelectionResult(viewModel.getPermissions(), viewModel.getStates());
+                listener.onPermissionSelectionResult(viewModel.getPermissions(), viewModel.getModes());
             }
         });
     }
@@ -81,7 +81,7 @@ public class SendPermissionsModalFragment extends DialogFragment {
 
     private void setPermissionText(String permission) {
         assert getContext() != null;
-        String permissionLocalizedName = PermissionHelper.getPermissionText(permission, getContext());
+        String permissionLocalizedName = PermissionStringHelper.getAsName(permission, getContext());
         lblPermission.setText(getString(R.string.permission_header, permissionLocalizedName));
     }
 
@@ -94,6 +94,6 @@ public class SendPermissionsModalFragment extends DialogFragment {
     public interface PermissionsModalListener {
         void onPermissionSelectionCancelled(String[] permissions);
 
-        void onPermissionSelectionResult(String[] permissions, Privacy.Mutation[] states);
+        void onPermissionSelectionResult(String[] permissions, Privacy.Mutation[] modes);
     }
 }

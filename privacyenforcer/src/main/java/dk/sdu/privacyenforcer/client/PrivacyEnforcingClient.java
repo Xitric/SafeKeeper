@@ -11,26 +11,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import dk.sdu.privacyenforcer.PermissionPreferenceUtil;
 import dk.sdu.privacyenforcer.client.filters.Filter;
 import dk.sdu.privacyenforcer.client.filters.FineLocationFilter;
 import dk.sdu.privacyenforcer.client.repository.LibraryDatabase;
+import dk.sdu.privacyenforcer.client.repository.MutatorDAO;
 import dk.sdu.privacyenforcer.client.repository.MutatorEntity;
 import dk.sdu.privacyenforcer.location.BatteryConservingLocationReceiver;
 import okhttp3.OkHttpClient;
 
 public class PrivacyEnforcingClient implements FilterProvider {
 
-    private SharedPreferences preferences;
+    private PermissionPreferenceUtil preferenceUtil;
     private Map<String, Filter> filters;
-    private Context context;
+    private MutatorDAO mutatorDao;
 
     public PrivacyEnforcingClient(Context context) {
-        this.context = context;
-        preferences = this.context.getSharedPreferences(Privacy.PERMISSION_PREFERENCE_FILE, Context.MODE_PRIVATE);
+        SharedPreferences preferences = context.getSharedPreferences(Privacy.PERMISSION_PREFERENCE_FILE, Context.MODE_PRIVATE);
+        preferenceUtil = new PermissionPreferenceUtil(preferences);
+        mutatorDao = LibraryDatabase.getInstance(context).mutatorDAO();
         filters = new HashMap<>();
 
         registerFilter(Privacy.Permission.SEND_LOCATION, new FineLocationFilter(new BatteryConservingLocationReceiver(context)));
-        registerMutators(context);
+        registerMutators();
     }
 
     public OkHttpClient.Builder getClientBuilder() {
@@ -48,7 +51,7 @@ public class PrivacyEnforcingClient implements FilterProvider {
     }
 
 
-    public void registerMutators(Context context) {
+    public void registerMutators() {
         for (Map.Entry<String, Filter> filterEntry : filters.entrySet()) {
             Set<String> mutatorIdentifiers = filterEntry.getValue().getMutators().keySet();
             List<MutatorEntity> mutatorEntities = new ArrayList<>();
@@ -60,31 +63,27 @@ public class PrivacyEnforcingClient implements FilterProvider {
                 mutatorEntities.add(mutatorEntity);
             }
 
-            new Thread(() -> LibraryDatabase.getInstance(context).mutatorDAO().insertAll(mutatorEntities)).start();
+            new Thread(() -> mutatorDao.insertAll(mutatorEntities)).start();
         }
     }
 
     @Override
     public List<Filter> getFilters() {
         List<Filter> result = new ArrayList<>();
-        Set<String> permissions = new HashSet<>(preferences.getStringSet(Privacy.PERMISSION_PREFERENCES, new HashSet<>()));
+        Set<String> permissions = new HashSet<>(preferenceUtil.getPermissions());
 
         for (Map.Entry<String, Filter> filterEntry : filters.entrySet()) {
             String permission = filterEntry.getKey();
             Filter filter = filterEntry.getValue();
 
-            String permissionMode = preferences.getString(permission + Privacy.MODE_SUFFIX, null);
-            if (permissionMode == null) {
-                filter.setMode(Privacy.Mutation.BLOCK);
-            } else if (permissionMode.equals("FAKE")) {
-                String mutatorId = preferences.getString(permission + Privacy.MUTATOR_SUFFIX, null);
-                filter.setDataMutator(mutatorId);
-                filter.setMode(Privacy.Mutation.valueOf(permissionMode));
-            } else {
-                filter.setMode(Privacy.Mutation.valueOf(permissionMode));
-            }
-            result.add(filter);
+            Privacy.Mutation permissionMode = preferenceUtil.getPermissionMode(permission);
+            filter.setMode(permissionMode);
 
+            if (permissionMode == Privacy.Mutation.FAKE) {
+                filter.setDataMutator(preferenceUtil.getMutator(permission));
+            }
+
+            result.add(filter);
             permissions.remove(permission);
         }
 

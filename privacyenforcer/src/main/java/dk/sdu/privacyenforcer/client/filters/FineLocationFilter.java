@@ -8,7 +8,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import dk.sdu.privacyenforcer.client.Privacy;
@@ -17,7 +16,6 @@ import dk.sdu.privacyenforcer.client.PrivacyViolationBody;
 import dk.sdu.privacyenforcer.client.PrivacyViolationUrl;
 import dk.sdu.privacyenforcer.client.RequestUrl;
 import dk.sdu.privacyenforcer.client.ViolationCollection;
-import dk.sdu.privacyenforcer.client.mutators.DataMutator;
 import dk.sdu.privacyenforcer.client.mutators.LocationDummyMutator;
 import dk.sdu.privacyenforcer.client.mutators.LocationKAnonymityMutator;
 import dk.sdu.privacyenforcer.location.BatteryConservingLocationReceiver;
@@ -31,6 +29,7 @@ public class FineLocationFilter extends AbstractFilter {
 
     public FineLocationFilter(BatteryConservingLocationReceiver locationReceiver) {
         this.locationReceiver = locationReceiver;
+
         mutators.put(Privacy.LocationMutators.LOCAL_OBFUSCATION, new LocationDummyMutator());
         mutators.put(Privacy.LocationMutators.K_ANONYMITY, new LocationKAnonymityMutator());
         mutator = mutators.get(Privacy.LocationMutators.LOCAL_OBFUSCATION);
@@ -129,18 +128,6 @@ public class FineLocationFilter extends AbstractFilter {
                     violations.addViolation(violation);
                 }
             }
-        }
-    }
-
-    @Override
-    public Map<String, DataMutator> getMutators() {
-        return mutators;
-    }
-
-    @Override
-    public void setDataMutator(String mutatorId) {
-        if (mutatorId != null) {
-            this.mutator = mutators.get(mutatorId);
         }
     }
 

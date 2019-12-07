@@ -8,8 +8,20 @@ import org.json.JSONObject;
 import dk.sdu.privacyenforcer.client.RequestUrl;
 import okhttp3.HttpUrl;
 
+/**
+ * Convenience implementation of {@link DataMutator} for location data to reduce the amount of
+ * duplicated code in subclasses.
+ */
 abstract class AbstractLocationMutator implements DataMutator {
 
+    /**
+     * Template method to be overridden by subclasses to generate a fake location given an original
+     * location fix.
+     *
+     * @param lat the latitude of the original location fix
+     * @param lon the longitude of the original location fix
+     * @return a fake location
+     */
     abstract Location getHiddenLocation(double lat, double lon);
 
     @Override
